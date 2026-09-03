@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>body{margin:0}</style>
+</helmet>
+<div style="background:#f8fafc;min-height:100vh;padding:32px;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#0f172a;font-size:14px;line-height:1.5;box-sizing:border-box">
+  <h1 style="font-size:20px;margin:0 0 4px">Ampliación de la librería</h1>
+  <p style="margin:0 0 28px;color:#64748b;max-width:760px">ProgressBar de horas, StatusPill, EmptyState, Alert/Toast y celda de Calendario — mismo formato de preview que Button/TextField, consistentes con los tokens ya sembrados.</p>
+
+  <!-- PROGRESSBAR -->
+  <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:24px;max-width:900px;margin-bottom:24px;box-sizing:border-box">
+    <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:14px">Componentes · ProgressBar de horas</div>
+    <p style="margin:0 0 18px;color:#64748b">Barra + número mono. Cambia a <code>--success</code> al llegar al mínimo de 130 hs. Tope visual en 200 hs.</p>
+    <div style="display:flex;flex-direction:column;gap:18px;max-width:420px">
+      <div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:18px;font-weight:600">28,0 hs</span><span style="font-size:12px;color:#94a3b8">de 130–200 hs</span></div>
+        <div style="height:8px;border-radius:9999px;background:#e2e8f0;overflow:hidden"><div style="height:100%;width:21%;background:#0f172a;border-radius:9999px"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:18px;font-weight:600;color:#15803d">142,0 hs</span><span style="font-size:12px;color:#94a3b8">de 130–200 hs · mínimo cumplido</span></div>
+        <div style="height:8px;border-radius:9999px;background:#e2e8f0;overflow:hidden"><div style="height:100%;width:71%;background:#15803d;border-radius:9999px"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:18px;font-weight:600;color:#15803d">200,0 hs</span><span style="font-size:12px;color:#94a3b8">tope máximo alcanzado</span></div>
+        <div style="height:8px;border-radius:9999px;background:#e2e8f0;overflow:hidden"><div style="height:100%;width:100%;background:#15803d;border-radius:9999px"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUSPILL -->
+  <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:24px;max-width:900px;margin-bottom:24px;box-sizing:border-box">
+    <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:14px">Componentes · StatusPill (tareas)</div>
+    <p style="margin:0 0 18px;color:#64748b">Estado de una tarea u objetivo. Radio full, texto 12px medium, punto de color.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:9999px;background:#f1f5f9;color:#334155;font-size:12px;font-weight:500"><span style="width:6px;height:6px;border-radius:9999px;background:#64748b"></span>Pendiente</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:9999px;background:#fef3c7;color:#b45309;font-size:12px;font-weight:500"><span style="width:6px;height:6px;border-radius:9999px;background:#b45309"></span>En curso</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:9999px;background:#dcfce7;color:#15803d;font-size:12px;font-weight:500"><span style="width:6px;height:6px;border-radius:9999px;background:#15803d"></span>Completada</span>
+    </div>
+  </div>
+
+  <!-- EMPTYSTATE -->
+  <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:24px;max-width:900px;margin-bottom:24px;box-sizing:border-box">
+    <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:14px">Componentes · EmptyState</div>
+    <p style="margin:0 0 18px;color:#64748b">Ícono en caja, título, descripción y CTA opcional. Borde punteado para diferenciarlo de una tarjeta con contenido.</p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div style="width:280px;border:1px dashed #cbd5e1;border-radius:14px;padding:24px 18px;text-align:center;box-sizing:border-box">
+        <div style="width:44px;height:44px;border-radius:12px;background:#f1f5f9;color:#334155;display:grid;place-items:center;margin:0 auto 14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M4 6h4v4H4zM4 14h4v4H4z"/><path d="M11 8h9M11 16h9"/></svg></div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">Sin tareas todavía</div>
+        <div style="font-size:12px;color:#64748b;margin-bottom:16px">Creá tu primer objetivo para esta PPS.</div>
+        <button style="font:inherit;font-weight:600;min-height:44px;width:100%;border-radius:10px;border:1px solid transparent;background:#0f172a;color:#fff;cursor:pointer">Nueva tarea</button>
+      </div>
+      <div style="width:280px;border:1px dashed #cbd5e1;border-radius:14px;padding:24px 18px;text-align:center;box-sizing:border-box">
+        <div style="width:44px;height:44px;border-radius:12px;background:#f1f5f9;color:#334155;display:grid;place-items:center;margin:0 auto 14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M4 5a2 2 0 0 1 2-2h5l2 2h5a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M12 10v5M9.5 12.5h5"/></svg></div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">Sin evidencia cargada</div>
+        <div style="font-size:12px;color:#64748b;margin-bottom:16px">Subí fotos o archivos de tus jornadas.</div>
+        <button style="font:inherit;font-weight:600;min-height:44px;width:100%;border-radius:10px;border:1px solid #e2e8f0;background:#fff;color:#0f172a;cursor:pointer">Subir evidencia</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERT/TOAST -->
+  <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:24px;max-width:900px;margin-bottom:24px;box-sizing:border-box">
+    <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:14px">Componentes · Alert / Toast</div>
+    <p style="margin:0 0 18px;color:#64748b">Alert = banner inline dentro de una pantalla o formulario. Toast = confirmación flotante tras una acción, se autodescarta.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:480px;margin-bottom:20px">
+      <div style="display:flex;gap:8px;align-items:flex-start;background:#f1f5f9;color:#334155;border-radius:10px;padding:10px 12px;font-size:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="width:16px;height:16px;flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"/><path d="M12 8v.5M12 11v5"/></svg><span>El audio se procesa en tu dispositivo y nunca se sube a un servidor.</span></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;background:#dcfce7;color:#15803d;border-radius:10px;padding:10px 12px;font-size:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="width:16px;height:16px;flex:none;margin-top:1px"><path d="M20 6 9 17l-5-5"/></svg><span>Jornada guardada correctamente.</span></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;background:#fef3c7;color:#b45309;border-radius:10px;padding:10px 12px;font-size:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="width:16px;height:16px;flex:none;margin-top:1px"><path d="M12 9v4M12 17v.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><span>Te quedan 12 hs para llegar al mínimo. Registrá tu próxima jornada.</span></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;background:#fee2e2;color:#b91c1c;border-radius:10px;padding:10px 12px;font-size:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="width:16px;height:16px;flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg><span>No se pudo guardar. Revisá tu conexión e intentá de nuevo.</span></div>
+    </div>
+    <div style="font-size:12px;color:#94a3b8;margin-bottom:8px">Toast (flotante, mobile)</div>
+    <div style="width:340px;display:flex;align-items:center;gap:10px;background:#0f172a;color:#fff;border-radius:12px;padding:12px 14px;font-size:13px;box-shadow:0 8px 20px -6px rgb(15 23 42/0.4)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="width:16px;height:16px;flex:none"><path d="M20 6 9 17l-5-5"/></svg>Jornada guardada</div>
+  </div>
+
+  <!-- CALENDAR CELL -->
+  <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:24px;max-width:900px;box-sizing:border-box">
+    <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:14px">Componentes · Celda de Calendario</div>
+    <p style="margin:0 0 18px;color:#64748b">Celda de grilla mensual. Punto = hay evento; anillo = hoy; fondo lleno = seleccionado.</p>
+    <div style="display:flex;gap:10px">
+      <div style="width:52px;height:52px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#0f172a"><span style="font-size:14px;font-weight:500">6</span></div>
+      <div style="width:52px;height:52px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#0f172a"><span style="font-size:14px;font-weight:500">10</span><span style="width:4px;height:4px;border-radius:9999px;background:#0f172a"></span></div>
+      <div style="width:52px;height:52px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#0f172a;border:1.5px solid #0f172a;box-sizing:border-box"><span style="font-size:14px;font-weight:600">13</span><span style="width:4px;height:4px;border-radius:9999px;background:#0f172a"></span></div>
+      <div style="width:52px;height:52px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:#0f172a;color:#fff"><span style="font-size:14px;font-weight:600">18</span><span style="width:4px;height:4px;border-radius:9999px;background:#fff"></span></div>
+      <div style="width:52px;height:52px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#cbd5e1"><span style="font-size:14px;font-weight:500">25</span></div>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;color:#64748b"><span>6 sin eventos</span><span>10 con evento</span><span>13 hoy</span><span>18 seleccionado</span><span>25 fuera de mes</span></div>
+  </div>
+</div>
+
+</x-dc>
+</body>
+</html>

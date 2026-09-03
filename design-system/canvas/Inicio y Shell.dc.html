@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>body{margin:0}</style>
+</helmet>
+<div style="background:#f8fafc;min-height:100vh;padding:40px;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#0f172a;box-sizing:border-box">
+  <h1 style="font-size:24px;font-weight:600;letter-spacing:-0.01em;margin:0 0 6px">Inicio / Panel de progreso + Shell del dashboard</h1>
+  <p style="font-size:14px;color:#64748b;margin:0 0 4px;max-width:760px">Aterrizaje post-login con horas, tareas, agenda y entrevistas de un vistazo. Debajo, el shell con navegación inferior (mobile) y lateral (desktop), y dónde vive el logout.</p>
+  <p style="font-size:12px;color:#94a3b8;margin:0 0 32px">Tokens: --success (horas cumplidas), --warning (en curso), --primary (barra/CTA), números en Geist Mono, --radius-lg tarjetas</p>
+
+  <div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+
+    <!-- INICIO MOBILE CON DATOS -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#64748b">Inicio · mobile · con datos</span>
+      <div style="width:390px;min-width:390px;height:844px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 4px 12px -2px rgb(15 23 42/0.1)">
+        <div style="flex:1;overflow:hidden;padding:24px 20px;display:flex;flex-direction:column;gap:18px;box-sizing:border-box">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:20px;font-weight:600">Hola, Julián</div>
+              <div style="font-size:12px;color:#64748b">Lic. en Administración · UCSE</div>
+            </div>
+            <div style="width:40px;height:40px;border-radius:9999px;background:#0f172a;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:600">JP</div>
+          </div>
+
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:18px;box-sizing:border-box">
+            <div style="font-size:13px;font-weight:500;color:#64748b;margin-bottom:8px">Horas de práctica</div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+              <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:26px;font-weight:600">86,5 hs</span>
+              <span style="font-size:13px;color:#94a3b8">de 130–200 hs</span>
+            </div>
+            <div style="height:8px;border-radius:9999px;background:#e2e8f0;overflow:hidden">
+              <div style="height:100%;width:66%;background:#0f172a;border-radius:9999px"></div>
+            </div>
+            <div style="font-size:12px;color:#64748b;margin-top:8px">Te faltan 43,5 hs para llegar al mínimo</div>
+          </div>
+
+          <div style="display:flex;gap:10px">
+            <div style="flex:1;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;text-align:center">
+              <div style="font-family:ui-monospace,Menlo,monospace;font-size:18px;font-weight:600">4</div>
+              <div style="font-size:11px;color:#64748b;margin-top:2px">Pendientes</div>
+            </div>
+            <div style="flex:1;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;text-align:center">
+              <div style="font-family:ui-monospace,Menlo,monospace;font-size:18px;font-weight:600;color:#b45309">2</div>
+              <div style="font-size:11px;color:#64748b;margin-top:2px">En curso</div>
+            </div>
+            <div style="flex:1;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;text-align:center">
+              <div style="font-family:ui-monospace,Menlo,monospace;font-size:18px;font-weight:600;color:#15803d">9</div>
+              <div style="font-size:11px;color:#64748b;margin-top:2px">Completadas</div>
+            </div>
+          </div>
+
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-sizing:border-box">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <span style="font-size:13px;font-weight:600">Próximos eventos</span>
+              <span style="font-size:12px;color:#64748b">Ver agenda</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;gap:10px;align-items:center">
+                <div style="width:38px;height:38px;border-radius:9px;background:#f1f5f9;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none"><span style="font-size:9px;color:#64748b;line-height:1">MAR</span><span style="font-size:13px;font-weight:600;line-height:1">10</span></div>
+                <div style="display:flex;flex-direction:column"><span style="font-size:13px;font-weight:500">Reunión de seguimiento</span><span style="font-size:11px;color:#64748b">10:00 · con tutor/a</span></div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center">
+                <div style="width:38px;height:38px;border-radius:9px;background:#f1f5f9;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none"><span style="font-size:9px;color:#64748b;line-height:1">MAR</span><span style="font-size:13px;font-weight:600;line-height:1">13</span></div>
+                <div style="display:flex;flex-direction:column"><span style="font-size:13px;font-weight:500">Entrega de bitácora semanal</span><span style="font-size:11px;color:#64748b">Todo el día</span></div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center">
+                <div style="width:38px;height:38px;border-radius:9px;background:#f1f5f9;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none"><span style="font-size:9px;color:#64748b;line-height:1">MAR</span><span style="font-size:13px;font-weight:600;line-height:1">18</span></div>
+                <div style="display:flex;flex-direction:column"><span style="font-size:13px;font-weight:500">Jornada en Empresa Demo S.A.</span><span style="font-size:11px;color:#64748b">09:00 – 13:00</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;display:flex;align-items:center;gap:12px;box-sizing:border-box">
+            <div style="width:36px;height:36px;border-radius:9px;background:#f1f5f9;color:#334155;display:grid;place-items:center;flex:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M4 5h16v11H9l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:600">3 entrevistas registradas</div><div style="font-size:11px;color:#64748b">Transcripción en tu dispositivo</div></div>
+            <span style="font-size:12px;color:#64748b">Ver todas</span>
+          </div>
+        </div>
+        <div style="height:64px;border-top:1px solid #e2e8f0;background:#ffffff;display:flex;padding:2px 0;flex:none;box-sizing:border-box">
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;font-size:10px;font-weight:500;color:#0f172a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Inicio</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;font-size:10px;font-weight:500;color:#94a3b8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/></svg>Bitácora</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;font-size:10px;font-weight:500;color:#94a3b8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M4 6h4v4H4zM4 14h4v4H4z"/><path d="M11 8h9M11 16h9"/></svg>Tareas</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;font-size:10px;font-weight:500;color:#94a3b8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M4 5a2 2 0 0 1 2-2h5l2 2h5a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M12 10v5M9.5 12.5h5"/></svg>Evidencia</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;font-size:10px;font-weight:500;color:#94a3b8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M4 5h16v16H4z"/><path d="M4 9h16M8 3v4M16 3v4"/></svg>Agenda</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- INICIO MOBILE VACIO -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#64748b">Inicio · mobile · cuenta nueva / vacío</span>
+      <div style="width:390px;min-width:390px;height:844px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 4px 12px -2px rgb(15 23 42/0.1)">
+        <div style="flex:1;overflow:hidden;padding:24px 20px;display:flex;flex-direction:column;gap:18px;box-sizing:border-box">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:20px;font-weight:600">Hola, Julián</div><div style="font-size:12px;color:#64748b">Lic. en Administración · UCSE</div></div>
+            <div style="width:40px;height:40px;border-radius:9999px;background:#0f172a;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:600">JP</div>
+          </div>
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:18px;box-sizing:border-box">
+            <div style="font-size:13px;font-weight:500;color:#64748b;margin-bottom:8px">Horas de práctica</div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+              <span style="font-family:ui-monospace,Menlo,monospace;font-size:26px;font-weight:600">0 hs</span>
+              <span style="font-size:13px;color:#94a3b8">de 130–200 hs</span>
+            </div>
+            <div style="height:8px;border-radius:9999px;background:#e2e8f0;overflow:hidden"><div style="height:100%;width:0%;background:#0f172a"></div></div>
+            <div style="font-size:12px;color:#64748b;margin-top:8px">Todavía no registraste horas</div>
+          </div>
+          <div style="background:#ffffff;border:1px dashed #cbd5e1;border-radius:14px;padding:24px 18px;text-align:center;box-sizing:border-box">
+            <div style="width:44px;height:44px;border-radius:12px;background:#f1f5f9;color:#334155;display:grid;place-items:center;margin:0 auto 14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/></svg></div>
+            <div style="font-size:14px;font-weight:600;margin-bottom:4px">Todavía no tenés jornadas registradas</div>
+            <div style="font-size:12px;color:#64748b;margin-bottom:16px">Empezá creando tu primera jornada de práctica.</div>
+            <button style="font:inherit;font-weight:600;min-height:44px;width:100%;border-radius:10px;border:1px solid transparent;background:#0f172a;color:#fff;cursor:pointer">Registrar jornada</button>
+          </div>
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-sizing:border-box">
+            <div style="font-size:13px;font-weight:600;margin-bottom:6px">Próximos eventos</div>
+            <div style="font-size:12px;color:#64748b">No tenés eventos cargados en tu agenda todavía.</div>
+          </div>
+          <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;display:flex;align-items:center;gap:12px;box-sizing:border-box">
+            <div style="width:36px;height:36px;border-radius:9px;background:#f1f5f9;color:#334155;display:grid;place-items:center;flex:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M4 5h16v11H9l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:600">0 entrevistas registradas</div><div style="font-size:11px;color:#64748b">Transcripción en tu dispositivo</div></div>
+          </div>
+        </div>
+        <div style="height:64px;border-top:1px solid #e2e8f0;background:#ffffff;display:flex;padding:2px 0;flex:none;box-sizing:border-box">
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;font-size:10px;font-weight:500;color:#0f172a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Inicio</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;font-size:10px;font-weight:500;color:#94a3b8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/></svg>Bitácora</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;font-size:10px;font-weight:500;color:#94a3b8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M4 6h4v4H4zM4 14h4v4H4z"/><path d="M11 8h9M11 16h9"/></svg>Tareas</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;font-size:10px;font-weight:500;color:#94a3b8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M4 5a2 2 0 0 1 2-2h5l2 2h5a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M12 10v5M9.5 12.5h5"/></svg>Evidencia</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;font-size:10px;font-weight:500;color:#94a3b8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M4 5h16v16H4z"/><path d="M4 9h16M8 3v4M16 3v4"/></svg>Agenda</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- INICIO DESKTOP -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#64748b">Inicio · desktop 1280 · con datos</span>
+      <div style="width:1280px;min-width:1280px;height:800px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;display:flex;box-shadow:0 4px 12px -2px rgb(15 23 42/0.1)">
+        <div style="width:240px;flex:none;border-right:1px solid #e2e8f0;background:#ffffff;display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:8px;padding:14px 18px;height:60px;box-sizing:border-box"><span style="width:34px;height:34px;border-radius:9px;background:#0f172a;color:#fff;display:grid;place-items:center;font-weight:700;font-size:12px">PPS</span><b style="font-size:13px">Gestión de PPS</b></div>
+          <nav style="display:flex;flex-direction:column;gap:2px;padding:8px 10px;flex:1">
+            <a style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:9px;font-weight:500;color:#fff;background:#0f172a;font-size:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Inicio</a>
+            <a style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:9px;font-weight:500;color:#64748b;font-size:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/></svg>Bitácora</a>
+            <a style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:9px;font-weight:500;color:#64748b;font-size:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M4 6h4v4H4zM4 14h4v4H4z"/><path d="M11 8h9M11 16h9"/></svg>Tareas</a>
+            <a style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:9px;font-weight:500;color:#64748b;font-size:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M4 5a2 2 0 0 1 2-2h5l2 2h5a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M12 10v5M9.5 12.5h5"/></svg>Evidencia</a>
+            <a style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:9px;font-weight:500;color:#64748b;font-size:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M4 5h16v16H4z"/><path d="M4 9h16M8 3v4M16 3v4"/></svg>Calendario</a>
+            <a style="display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:9px;font-weight:500;color:#64748b;font-size:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M4 5h16v11H9l-4 4z"/><path d="M8 9h8M8 12h5"/></svg>Entrevistas</a>
+          </nav>
+          <div style="border-top:1px solid #e2e8f0;padding:12px 10px;display:flex;flex-direction:column;gap:2px">
+            <div style="display:flex;align-items:center;gap:10px;padding:6px 12px"><span style="width:28px;height:28px;border-radius:9999px;background:#0f172a;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:600">JP</span><span style="font-size:12px;font-weight:500">Julián Pérez</span></div>
+            <a style="display:flex;align-items:center;gap:12px;min-height:40px;padding:0 12px;border-radius:9px;color:#64748b;font-size:13px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Cerrar sesión</a>
+          </div>
+        </div>
+        <div style="flex:1;padding:32px 40px;overflow:hidden;box-sizing:border-box">
+          <div style="font-size:22px;font-weight:600;letter-spacing:-0.01em;margin-bottom:20px">Hola, Julián</div>
+          <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:20px;margin-bottom:20px">
+            <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:22px;box-sizing:border-box">
+              <div style="font-size:13px;font-weight:500;color:#64748b;margin-bottom:10px">Horas de práctica</div>
+              <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:32px;font-weight:600">86,5 hs</span><span style="font-size:14px;color:#94a3b8">de 130–200 hs</span></div>
+              <div style="height:10px;border-radius:9999px;background:#e2e8f0;overflow:hidden"><div style="height:100%;width:66%;background:#0f172a;border-radius:9999px"></div></div>
+              <div style="font-size:12px;color:#64748b;margin-top:8px">Te faltan 43,5 hs para llegar al mínimo</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="flex:1;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px;color:#64748b">Pendientes</span><span style="font-family:ui-monospace,Menlo,monospace;font-size:16px;font-weight:600">4</span></div>
+              <div style="flex:1;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px;color:#64748b">En curso</span><span style="font-family:ui-monospace,Menlo,monospace;font-size:16px;font-weight:600;color:#b45309">2</span></div>
+              <div style="flex:1;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px;color:#64748b">Completadas</span><span style="font-family:ui-monospace,Menlo,monospace;font-size:16px;font-weight:600;color:#15803d">9</span></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:20px">
+            <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;box-sizing:border-box">
+              <div style="font-size:13px;font-weight:600;margin-bottom:12px">Próximos eventos</div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;gap:10px;align-items:center"><div style="width:38px;height:38px;border-radius:9px;background:#f1f5f9;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none"><span style="font-size:9px;color:#64748b;line-height:1">MAR</span><span style="font-size:13px;font-weight:600;line-height:1">10</span></div><span style="font-size:13px">Reunión de seguimiento · 10:00</span></div>
+                <div style="display:flex;gap:10px;align-items:center"><div style="width:38px;height:38px;border-radius:9px;background:#f1f5f9;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none"><span style="font-size:9px;color:#64748b;line-height:1">MAR</span><span style="font-size:13px;font-weight:600;line-height:1">13</span></div><span style="font-size:13px">Entrega de bitácora semanal</span></div>
+                <div style="display:flex;gap:10px;align-items:center"><div style="width:38px;height:38px;border-radius:9px;background:#f1f5f9;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none"><span style="font-size:9px;color:#64748b;line-height:1">MAR</span><span style="font-size:13px;font-weight:600;line-height:1">18</span></div><span style="font-size:13px">Jornada en Empresa Demo S.A. · 09:00–13:00</span></div>
+              </div>
+            </div>
+            <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:10px;box-sizing:border-box">
+              <div style="width:36px;height:36px;border-radius:9px;background:#f1f5f9;color:#334155;display:grid;place-items:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M4 5h16v11H9l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div>
+              <div style="font-size:13px;font-weight:600">3 entrevistas registradas</div>
+              <div style="font-size:12px;color:#64748b">El audio se procesa en tu dispositivo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHELL MOBILE CON MENU/LOGOUT -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#64748b">Shell · mobile · menú "Más" con logout</span>
+      <div style="width:390px;min-width:390px;height:844px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 4px 12px -2px rgb(15 23 42/0.1)">
+        <div style="flex:1;padding:24px 20px;box-sizing:border-box">
+          <div style="font-size:18px;font-weight:600;margin-bottom:4px">Bitácora</div>
+          <div style="font-size:12px;color:#64748b">Contenido del módulo…</div>
+        </div>
+        <div style="position:absolute;inset:0 0 0 0;background:rgb(15 23 42/0.35)"></div>
+        <div style="position:absolute;left:0;right:0;bottom:64px;background:#ffffff;border-radius:16px 16px 0 0;padding:12px 8px 8px;box-shadow:0 -4px 16px -4px rgb(15 23 42/0.15);box-sizing:border-box">
+          <div style="width:36px;height:4px;background:#e2e8f0;border-radius:9999px;margin:0 auto 12px"></div>
+          <a style="display:flex;align-items:center;gap:14px;min-height:44px;padding:0 14px;border-radius:10px;color:#0f172a;font-size:14px;font-weight:500"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M4 5h16v11H9l-4 4z"/><path d="M8 9h8M8 12h5"/></svg>Entrevistas</a>
+          <a style="display:flex;align-items:center;gap:14px;min-height:44px;padding:0 14px;border-radius:10px;color:#0f172a;font-size:14px;font-weight:500"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><circle cx="11" cy="11" r="6"/><path d="m20 20-3.5-3.5"/></svg>Búsqueda</a>
+          <div style="border-top:1px solid #e2e8f0;margin:6px 14px"></div>
+          <a style="display:flex;align-items:center;gap:14px;min-height:44px;padding:0 14px;border-radius:10px;color:#b91c1c;font-size:14px;font-weight:500"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>Cerrar sesión</a>
+        </div>
+        <div style="height:64px;border-top:1px solid #e2e8f0;background:#ffffff;display:flex;padding:2px 0;flex:none;box-sizing:border-box;position:relative;z-index:2">
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:500;color:#94a3b8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Inicio</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:500;color:#0f172a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/></svg>Bitácora</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:500;color:#94a3b8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M4 6h4v4H4zM4 14h4v4H4z"/><path d="M11 8h9M11 16h9"/></svg>Tareas</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:500;color:#94a3b8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M4 5a2 2 0 0 1 2-2h5l2 2h5a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M12 10v5M9.5 12.5h5"/></svg>Evidencia</a>
+          <a style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:600;color:#0f172a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>Más</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+</body>
+</html>

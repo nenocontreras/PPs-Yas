@@ -17,7 +17,9 @@ al proyecto de Claude Design **"App de Gestión de PPS — Design System"**
   name="…" subtitle="…" width="…" height="…" -->` que el panel usa para armar
   la grilla de tarjetas.
 
-## Inventario (batch 1)
+## Inventario
+
+**Fundamentos + componentes base** (`foundations/`, `components/`):
 
 | Grupo | Ítem | Estado |
 |-------|------|--------|
@@ -27,9 +29,11 @@ al proyecto de Claude Design **"App de Gestión de PPS — Design System"**
 | Componentes | AuthCard (login / registro) | ✅ spec, falta código (Fase 2) |
 | Componentes | Navigation | ✅ documenta `dashboard-nav.tsx` existente |
 | Componentes | ModuleCard | ✅ documenta el placeholder existente |
+| Componentes | ProgressBar, StatusPill, EmptyState, Alert/Toast, celda de Calendario | ✅ spec en `canvas/Componentes Nuevos.dc.html`, falta código |
 
-Pendiente (Fases 3-5): ProgressBar de horas, StatusPill de tareas, EmptyState,
-Alert / Toast, celda de Calendario.
+**Pantallas de alta fidelidad** (`canvas/` — exports de Claude Design, ver su
+propio README): flujo de autenticación completo, panel de progreso (Inicio) y
+shell del dashboard con logout.
 
 ## Sincronizar con Claude Design
 
