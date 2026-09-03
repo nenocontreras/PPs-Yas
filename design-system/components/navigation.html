@@ -1,0 +1,82 @@
+<!-- @dsCard group="Componentes" name="Navigation" subtitle="Barra inferior (mobile) · barra lateral (desktop)" width="1180" height="820" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Navigation · Design System PPS</title>
+<style>
+  :root{color-scheme:light dark;
+    --slate-100:#f1f5f9;--slate-200:#e2e8f0;--slate-400:#94a3b8;--slate-500:#64748b;--slate-700:#334155;--slate-900:#0f172a;--slate-950:#020617;
+    --bg:#f8fafc;--surface:#fff;--surface-2:var(--slate-100);--border:var(--slate-200);--text:var(--slate-900);--text-muted:var(--slate-500);
+    --primary:var(--slate-900);--primary-fg:#fff;--font-sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  @media (prefers-color-scheme:dark){:root{--bg:var(--slate-950);--surface:#0f172a;--surface-2:#1e293b;--border:#1e293b;--text:#f1f5f9;--text-muted:#94a3b8;--primary:#f1f5f9;--primary-fg:#0f172a}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:14px;line-height:1.5}
+  h1{font-size:20px;margin:0 0 4px}
+  p.lead{margin:0 0 24px;color:var(--text-muted)}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin:24px 0 12px}
+  .stage{display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start}
+  svg{width:22px;height:22px}
+
+  /* phone frame */
+  .phone{width:300px;height:520px;border:1px solid var(--border);border-radius:26px;overflow:hidden;position:relative;background:var(--bg);display:flex;flex-direction:column}
+  .phone .body{flex:1;padding:16px;font-size:13px;color:var(--text-muted)}
+  .bottomnav{border-top:1px solid var(--border);background:color-mix(in srgb,var(--surface) 95%,transparent);display:flex;padding:2px}
+  .bottomnav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;font-size:10px;font-weight:500;text-decoration:none;color:var(--slate-400);border-radius:8px}
+  .bottomnav a.active{color:var(--text)}
+
+  /* desktop sidebar */
+  .side{width:240px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface)}
+  .side .head{display:flex;align-items:center;gap:8px;padding:14px 18px;height:60px}
+  .side .head .mark{width:34px;height:34px;border-radius:9px;background:var(--primary);color:var(--primary-fg);display:grid;place-items:center;font-weight:700;font-size:12px}
+  .side .head b{font-size:13px}
+  .side nav{display:flex;flex-direction:column;gap:2px;padding:8px 10px}
+  .side nav a{display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:9px;text-decoration:none;font-weight:500;color:var(--text-muted);font-size:13px}
+  .side nav a svg{width:18px;height:18px}
+  .side nav a:hover{background:var(--surface-2);color:var(--text)}
+  .side nav a.active{background:var(--primary);color:var(--primary-fg)}
+
+  .note{margin-top:22px;font-size:13px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;max-width:640px}
+</style>
+</head>
+<body>
+  <h1>Navigation</h1>
+  <p class="lead">Misma lista de destinos, dos formas: <b>barra inferior fija</b> hasta <code>lg</code> (pulgar), <b>barra lateral</b> desde <code>lg</code>. Ítem activo por <code>aria-current="page"</code>. Fuente única: <code>src/lib/modules.ts</code>.</p>
+
+  <div class="stage">
+    <div>
+      <h2>Mobile — barra inferior</h2>
+      <div class="phone">
+        <div class="body">Contenido del módulo…</div>
+        <div class="bottomnav">
+          <a class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Inicio</a>
+          <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/></svg>Bitácora</a>
+          <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h4v4H4zM4 14h4v4H4z"/><path d="M11 8h9M11 16h9"/></svg>Tareas</a>
+          <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h5l2 2h5a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M12 10v5M9.5 12.5h5"/></svg>Evidencia</a>
+          <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v16H4z"/><path d="M4 9h16M8 3v4M16 3v4"/></svg>Agenda</a>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--text-muted);max-width:300px;margin-top:8px">7 destinos reales; en pantallas muy angostas la barra scrollea o se prioriza. <code>pb-[env(safe-area-inset-bottom)]</code>.</p>
+    </div>
+
+    <div>
+      <h2>Desktop — barra lateral</h2>
+      <div class="side">
+        <div class="head"><span class="mark">PPS</span><b>Gestión de PPS</b></div>
+        <nav>
+          <a class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Inicio</a>
+          <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/></svg>Bitácora</a>
+          <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h4v4H4zM4 14h4v4H4z"/><path d="M11 8h9M11 16h9"/></svg>Tareas</a>
+          <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h5l2 2h5a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M12 10v5M9.5 12.5h5"/></svg>Evidencia</a>
+          <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v16H4z"/><path d="M4 9h16M8 3v4M16 3v4"/></svg>Calendario</a>
+          <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-4 4z"/><path d="M8 9h8M8 12h5"/></svg>Entrevistas</a>
+          <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-3.5-3.5"/></svg>Búsqueda</a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">Implementado en <code>src/components/dashboard-nav.tsx</code>. El logout (Fase 2) va al pie de la barra lateral y en un menú en mobile.</div>
+</body>
+</html>

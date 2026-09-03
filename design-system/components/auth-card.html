@@ -1,0 +1,115 @@
+<!-- @dsCard group="Componentes" name="AuthCard" subtitle="Layout de login / registro · error banner" width="1180" height="900" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AuthCard · Design System PPS</title>
+<style>
+  :root{color-scheme:light dark;
+    --slate-100:#f1f5f9;--slate-200:#e2e8f0;--slate-300:#cbd5e1;--slate-400:#94a3b8;--slate-500:#64748b;--slate-700:#334155;--slate-900:#0f172a;--slate-950:#020617;
+    --bg:#f8fafc;--surface:#fff;--surface-2:var(--slate-100);--border:var(--slate-200);--border-strong:var(--slate-300);--text:var(--slate-900);--text-muted:var(--slate-500);
+    --primary:var(--slate-900);--primary-fg:#fff;--primary-hover:var(--slate-700);--danger:#b91c1c;--danger-bg:#fee2e2;--focus:#6366f1;--radius:.625rem;--radius-lg:.875rem;
+    --font-sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  @media (prefers-color-scheme:dark){:root{--bg:var(--slate-950);--surface:#0f172a;--surface-2:#1e293b;--border:#1e293b;--border-strong:#334155;--text:#f1f5f9;--text-muted:#94a3b8;--primary:#f1f5f9;--primary-fg:#0f172a;--primary-hover:#cbd5e1;--danger:#f87171;--danger-bg:#7f1d1d}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:14px;line-height:1.5}
+  h1{font-size:20px;margin:0 0 4px}
+  p.lead{margin:0 0 24px;color:var(--text-muted)}
+  .stage{display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start}
+
+  .screen{width:400px;max-width:100%;min-height:560px;background:var(--bg);border:1px solid var(--border);border-radius:20px;
+    display:flex;flex-direction:column;justify-content:center;padding:28px;gap:0}
+  .card{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px;box-shadow:0 4px 16px -6px rgb(15 23 42 / .12)}
+  .brand{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:22px}
+  .brand .mark{width:44px;height:44px;border-radius:12px;background:var(--primary);color:var(--primary-fg);display:grid;place-items:center;font-weight:700;font-size:14px}
+  .brand h2{margin:0;font-size:18px;font-weight:600}
+  .brand p{margin:0;font-size:13px;color:var(--text-muted)}
+
+  .banner{display:flex;gap:8px;align-items:flex-start;background:var(--danger-bg);color:var(--danger);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:16px}
+  .banner svg{width:16px;height:16px;flex:none;margin-top:1px}
+
+  form{display:flex;flex-direction:column;gap:14px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-weight:500;font-size:13px}
+  .field .row{display:flex;justify-content:space-between;align-items:baseline}
+  .field .row a{font-size:12px;color:var(--text-muted);text-decoration:none}
+  .field .row a:hover{color:var(--text);text-decoration:underline}
+  input{font:inherit;width:100%;min-height:2.75rem;padding:0 12px;color:var(--text);background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--radius)}
+  input:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0 3px color-mix(in srgb,var(--focus) 22%,transparent)}
+
+  .btn{font:inherit;font-weight:600;min-height:3rem;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;width:100%;background:var(--primary);color:var(--primary-fg);margin-top:4px}
+  .btn:hover{background:var(--primary-hover)}
+  .btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+  .alt{margin-top:18px;text-align:center;font-size:13px;color:var(--text-muted)}
+  .alt a{color:var(--text);font-weight:500;text-decoration:none}
+  .alt a:hover{text-decoration:underline}
+  .legal{margin-top:14px;text-align:center;font-size:11px;color:var(--text-muted)}
+
+  .tag{position:absolute;transform:translateY(-30px);font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+  .wrap{position:relative}
+</style>
+</head>
+<body>
+  <h1>AuthCard</h1>
+  <p class="lead">Pantalla centrada, card de ancho 400 máx. Marca arriba, error como banner sobre el form, botón primario full-width (48px), link a la otra acción abajo. Sirve para <b>/login</b> y <b>/registro</b>.</p>
+
+  <div class="stage">
+    <div class="wrap">
+      <span class="tag">Login</span>
+      <div class="screen">
+        <div class="card">
+          <div class="brand">
+            <div class="mark">PPS</div>
+            <h2>Ingresá a tu cuenta</h2>
+            <p>Gestión de Prácticas Profesionales Supervisadas</p>
+          </div>
+          <form>
+            <div class="field">
+              <label for="l-email">Email</label>
+              <input id="l-email" type="email" placeholder="tu@correo.com" autocomplete="email" />
+            </div>
+            <div class="field">
+              <div class="row"><label for="l-pass">Contraseña</label><a href="#">¿La olvidaste?</a></div>
+              <input id="l-pass" type="password" autocomplete="current-password" />
+            </div>
+            <button class="btn" type="submit">Ingresar</button>
+          </form>
+          <p class="alt">¿No tenés cuenta? <a href="#">Crear una</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <span class="tag">Registro · con error</span>
+      <div class="screen">
+        <div class="card">
+          <div class="brand">
+            <div class="mark">PPS</div>
+            <h2>Creá tu cuenta</h2>
+            <p>Para estudiantes que están haciendo su PPS</p>
+          </div>
+          <div class="banner" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>
+            <span>Ya existe una cuenta con ese email.</span>
+          </div>
+          <form>
+            <div class="field">
+              <label for="r-email">Email</label>
+              <input id="r-email" type="email" value="ana@ejemplo.com" autocomplete="email" />
+            </div>
+            <div class="field">
+              <label for="r-pass">Contraseña</label>
+              <input id="r-pass" type="password" autocomplete="new-password" />
+            </div>
+            <button class="btn" type="submit">Crear cuenta</button>
+          </form>
+          <p class="alt">¿Ya tenés cuenta? <a href="#">Ingresar</a></p>
+          <p class="legal">Al crear la cuenta aceptás el uso responsable de datos de tu PPS.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

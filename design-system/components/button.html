@@ -1,0 +1,89 @@
+<!-- @dsCard group="Componentes" name="Button" subtitle="primary / secondary / ghost / danger · sm·md·lg · loading·disabled" width="1120" height="820" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Button · Design System PPS</title>
+<style>
+  :root{color-scheme:light dark;
+    --slate-100:#f1f5f9;--slate-200:#e2e8f0;--slate-300:#cbd5e1;--slate-500:#64748b;--slate-700:#334155;--slate-900:#0f172a;--slate-950:#020617;
+    --bg:#f8fafc;--surface:#fff;--surface-2:var(--slate-100);--border:var(--slate-200);--text:var(--slate-900);--text-muted:var(--slate-500);
+    --primary:var(--slate-900);--primary-fg:#fff;--primary-hover:var(--slate-700);--danger:#b91c1c;--danger-bg:#fee2e2;--focus:#6366f1;
+    --radius:.625rem;--font-sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--font-mono:ui-monospace,Menlo,monospace}
+  @media (prefers-color-scheme:dark){:root{--bg:var(--slate-950);--surface:#0f172a;--surface-2:#1e293b;--border:#1e293b;--text:#f1f5f9;--text-muted:#94a3b8;--primary:#f1f5f9;--primary-fg:#0f172a;--primary-hover:#cbd5e1;--danger:#f87171;--danger-bg:#7f1d1d}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:14px;line-height:1.5}
+  h1{font-size:20px;margin:0 0 4px}
+  p.lead{margin:0 0 24px;color:var(--text-muted)}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin:28px 0 12px}
+  .grid{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+  .btn{--h:2.75rem;font:inherit;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+    min-height:var(--h);padding:0 1.1rem;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;
+    transition:background .15s,border-color .15s,opacity .15s;white-space:nowrap;user-select:none}
+  .btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .btn.sm{--h:2.25rem;font-size:13px;padding:0 .8rem}
+  .btn.lg{--h:3rem;font-size:15px;padding:0 1.4rem}
+  .btn.block{display:flex;width:100%}
+
+  .btn.primary{background:var(--primary);color:var(--primary-fg)}
+  .btn.primary:hover{background:var(--primary-hover)}
+  .btn.secondary{background:var(--surface);color:var(--text);border-color:var(--border)}
+  .btn.secondary:hover{background:var(--surface-2)}
+  .btn.ghost{background:transparent;color:var(--text)}
+  .btn.ghost:hover{background:var(--surface-2)}
+  .btn.danger{background:var(--danger);color:#fff}
+  .btn.danger:hover{filter:brightness(.94)}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;pointer-events:none}
+
+  .spinner{width:1em;height:1em;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:sp .7s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  svg{width:1.05em;height:1.05em}
+
+  .spec{margin-top:28px;font-family:var(--font-mono);font-size:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text-muted);white-space:pre-wrap}
+</style>
+</head>
+<body>
+  <h1>Button</h1>
+  <p class="lead">Acción principal por pantalla: un solo <b>primary</b>. En mobile los formularios usan <b>primary block</b> (ancho completo, 48px). <b>ghost</b> para acciones terciarias y toolbars.</p>
+
+  <h2>Variantes</h2>
+  <div class="grid">
+    <button class="btn primary">Guardar jornada</button>
+    <button class="btn secondary">Cancelar</button>
+    <button class="btn ghost">Ver detalle</button>
+    <button class="btn danger">Eliminar</button>
+  </div>
+
+  <h2>Tamaños</h2>
+  <div class="grid">
+    <button class="btn primary sm">Small</button>
+    <button class="btn primary">Medium (default)</button>
+    <button class="btn primary lg">Large</button>
+  </div>
+
+  <h2>Con ícono</h2>
+  <div class="grid">
+    <button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Nueva jornada</button>
+    <button class="btn secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Marcar completada</button>
+  </div>
+
+  <h2>Estados</h2>
+  <div class="grid">
+    <button class="btn primary" disabled>Deshabilitado</button>
+    <button class="btn primary"><span class="spinner"></span>Guardando…</button>
+    <button class="btn secondary" disabled>Deshabilitado</button>
+  </div>
+
+  <h2>Ancho completo (mobile)</h2>
+  <div style="max-width:360px">
+    <button class="btn primary lg block">Ingresar</button>
+  </div>
+
+  <div class="spec">&lt;Button variant="primary|secondary|ghost|danger" size="sm|md|lg" block loading disabled&gt;
+  · loading  → muestra spinner, deshabilita, mantiene el ancho
+  · como link → &lt;Button asChild&gt;&lt;Link href&gt;…&lt;/Link&gt;&lt;/Button&gt;
+  · foco visible SIEMPRE (outline var(--focus)), nunca outline:none</div>
+</body>
+</html>

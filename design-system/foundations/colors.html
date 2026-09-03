@@ -1,0 +1,70 @@
+<!-- @dsCard group="Fundamentos" name="Colores" subtitle="Escala slate + tokens semánticos (light / dark)" width="1120" height="720" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Colores · Design System PPS</title>
+<style>
+  /* — tokens (copia canónica de design-system/_tokens.css) — */
+  :root{color-scheme:light dark;
+    --slate-50:#f8fafc;--slate-100:#f1f5f9;--slate-200:#e2e8f0;--slate-300:#cbd5e1;--slate-400:#94a3b8;--slate-500:#64748b;--slate-600:#475569;--slate-700:#334155;--slate-800:#1e293b;--slate-900:#0f172a;--slate-950:#020617;
+    --bg:var(--slate-50);--surface:#fff;--surface-2:var(--slate-100);--border:var(--slate-200);--border-strong:var(--slate-300);--text:var(--slate-900);--text-muted:var(--slate-500);
+    --primary:var(--slate-900);--primary-fg:#fff;--success:#15803d;--success-bg:#dcfce7;--warning:#b45309;--warning-bg:#fef3c7;--danger:#b91c1c;--danger-bg:#fee2e2;--focus:#6366f1;
+    --radius:.625rem;--font-sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  @media (prefers-color-scheme:dark){:root{--bg:var(--slate-950);--surface:var(--slate-900);--surface-2:var(--slate-800);--border:var(--slate-800);--border-strong:var(--slate-700);--text:var(--slate-100);--text-muted:var(--slate-400);--primary:var(--slate-100);--primary-fg:var(--slate-900);--success:#4ade80;--success-bg:#14532d;--warning:#fbbf24;--warning-bg:#78350f;--danger:#f87171;--danger-bg:#7f1d1d}}
+
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:14px;line-height:1.5}
+  h1{font-size:20px;margin:0 0 4px}
+  p.lead{margin:0 0 28px;color:var(--text-muted)}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin:28px 0 12px}
+  .row{display:flex;flex-wrap:wrap;gap:10px}
+  .sw{width:104px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface)}
+  .sw .chip{height:56px}
+  .sw .meta{padding:6px 8px;font-size:11px}
+  .sw .meta b{display:block;font-weight:600}
+  .sw .meta code{color:var(--text-muted);font-size:10px}
+  .sem{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+  .sem .item{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--surface)}
+  .sem .dot{width:34px;height:34px;border-radius:8px;border:1px solid var(--border-strong);flex:none}
+  .sem .item span{font-size:12px}
+  .sem .item span b{display:block}
+  .sem .item span code{color:var(--text-muted);font-size:11px}
+</style>
+</head>
+<body>
+  <h1>Colores</h1>
+  <p class="lead">Escala slate idéntica a Tailwind. Los componentes usan solo los tokens semánticos, nunca el hex directo. Dark mode = <code>prefers-color-scheme</code>.</p>
+
+  <h2>Escala slate</h2>
+  <div class="row">
+    <div class="sw"><div class="chip" style="background:#f8fafc"></div><div class="meta"><b>50</b><code>#f8fafc</code></div></div>
+    <div class="sw"><div class="chip" style="background:#f1f5f9"></div><div class="meta"><b>100</b><code>#f1f5f9</code></div></div>
+    <div class="sw"><div class="chip" style="background:#e2e8f0"></div><div class="meta"><b>200</b><code>#e2e8f0</code></div></div>
+    <div class="sw"><div class="chip" style="background:#cbd5e1"></div><div class="meta"><b>300</b><code>#cbd5e1</code></div></div>
+    <div class="sw"><div class="chip" style="background:#94a3b8"></div><div class="meta"><b>400</b><code>#94a3b8</code></div></div>
+    <div class="sw"><div class="chip" style="background:#64748b"></div><div class="meta"><b>500</b><code>#64748b</code></div></div>
+    <div class="sw"><div class="chip" style="background:#475569"></div><div class="meta"><b>600</b><code>#475569</code></div></div>
+    <div class="sw"><div class="chip" style="background:#334155"></div><div class="meta"><b>700</b><code>#334155</code></div></div>
+    <div class="sw"><div class="chip" style="background:#1e293b"></div><div class="meta"><b>800</b><code>#1e293b</code></div></div>
+    <div class="sw"><div class="chip" style="background:#0f172a"></div><div class="meta"><b>900</b><code>#0f172a</code></div></div>
+    <div class="sw"><div class="chip" style="background:#020617"></div><div class="meta"><b>950</b><code>#020617</code></div></div>
+  </div>
+
+  <h2>Tokens semánticos</h2>
+  <div class="sem">
+    <div class="item"><span class="dot" style="background:var(--bg)"></span><span><b>--bg</b><code>fondo de página</code></span></div>
+    <div class="item"><span class="dot" style="background:var(--surface)"></span><span><b>--surface</b><code>tarjetas, inputs</code></span></div>
+    <div class="item"><span class="dot" style="background:var(--surface-2)"></span><span><b>--surface-2</b><code>hover sutil, chips</code></span></div>
+    <div class="item"><span class="dot" style="background:var(--border)"></span><span><b>--border</b><code>divisores</code></span></div>
+    <div class="item"><span class="dot" style="background:var(--text)"></span><span><b>--text</b><code>texto principal</code></span></div>
+    <div class="item"><span class="dot" style="background:var(--text-muted)"></span><span><b>--text-muted</b><code>secundario, hints</code></span></div>
+    <div class="item"><span class="dot" style="background:var(--primary)"></span><span><b>--primary</b><code>botón primario, activo</code></span></div>
+    <div class="item"><span class="dot" style="background:var(--success);border-color:var(--success)"></span><span><b>--success</b><code>horas cumplidas</code></span></div>
+    <div class="item"><span class="dot" style="background:var(--warning);border-color:var(--warning)"></span><span><b>--warning</b><code>atención</code></span></div>
+    <div class="item"><span class="dot" style="background:var(--danger);border-color:var(--danger)"></span><span><b>--danger</b><code>errores, destructivo</code></span></div>
+    <div class="item"><span class="dot" style="background:var(--focus);border-color:var(--focus)"></span><span><b>--focus</b><code>anillo de foco</code></span></div>
+  </div>
+</body>
+</html>

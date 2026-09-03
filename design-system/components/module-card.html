@@ -1,0 +1,65 @@
+<!-- @dsCard group="Componentes" name="ModuleCard" subtitle="Tarjeta de módulo (grilla de Inicio) + placeholder" width="1120" height="720" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ModuleCard · Design System PPS</title>
+<style>
+  :root{color-scheme:light dark;
+    --slate-100:#f1f5f9;--slate-200:#e2e8f0;--slate-300:#cbd5e1;--slate-500:#64748b;--slate-700:#334155;--slate-800:#1e293b;--slate-900:#0f172a;--slate-950:#020617;
+    --bg:#f8fafc;--surface:#fff;--surface-2:var(--slate-100);--border:var(--slate-200);--text:var(--slate-900);--text-muted:var(--slate-500);
+    --primary:var(--slate-900);--primary-fg:#fff;--font-sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  @media (prefers-color-scheme:dark){:root{--bg:var(--slate-950);--surface:#0f172a;--surface-2:#1e293b;--border:#1e293b;--text:#f1f5f9;--text-muted:#94a3b8;--primary:#f1f5f9;--primary-fg:#0f172a}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:14px;line-height:1.5}
+  h1{font-size:20px;margin:0 0 4px}
+  p.lead{margin:0 0 24px;color:var(--text-muted)}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin:24px 0 12px}
+
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:620px}
+  .mcard{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;text-decoration:none;color:inherit}
+  .mcard:hover{border-color:var(--slate-300);background:var(--surface-2)}
+  .mcard .ic{width:36px;height:36px;flex:none;border-radius:9px;background:var(--surface-2);color:var(--slate-700);display:grid;place-items:center;margin-top:2px}
+  @media (prefers-color-scheme:dark){.mcard .ic{color:#e2e8f0}}
+  .mcard .ic svg{width:20px;height:20px}
+  .mcard b{display:block;font-size:14px;font-weight:600}
+  .mcard span{display:block;margin-top:2px;font-size:12px;line-height:1.35;color:var(--text-muted)}
+
+  .placeholder{max-width:520px;border:1px dashed var(--slate-300);border-radius:14px;background:var(--surface);padding:18px}
+  @media (prefers-color-scheme:dark){.placeholder{border-color:var(--slate-700)}}
+  .placeholder .top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .placeholder .top .ic{width:44px;height:44px;border-radius:12px;background:var(--primary);color:var(--primary-fg);display:grid;place-items:center}
+  .placeholder .top h3{margin:0;font-size:18px;font-weight:600}
+  .placeholder .box{border:1px dashed var(--slate-300);border-radius:12px;background:var(--surface-2);padding:12px;font-size:13px;color:var(--text-muted)}
+  @media (prefers-color-scheme:dark){.placeholder .box{border-color:var(--slate-700)}}
+  .placeholder .box b{color:var(--text);display:block;font-size:13px}
+</style>
+</head>
+<body>
+  <h1>ModuleCard</h1>
+  <p class="lead">Dos usos: la <b>tarjeta de módulo</b> en la grilla de Inicio (link al módulo), y el <b>placeholder</b> de módulo no implementado (nombre, descripción, fase del plan).</p>
+
+  <h2>Grilla de Inicio</h2>
+  <div class="grid">
+    <a class="mcard">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/></svg></span>
+      <span><b>Bitácora</b><span>Registro de jornadas: fecha, horas, tareas y observaciones, con el total hacia el mínimo de 130 hs.</span></span>
+    </a>
+    <a class="mcard">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h4v4H4zM4 14h4v4H4z"/><path d="M11 8h9M11 16h9"/></svg></span>
+      <span><b>Tareas</b><span>Objetivos con estado y asociación a bloques de la Ficha Maestra.</span></span>
+    </a>
+  </div>
+
+  <h2>Placeholder de módulo</h2>
+  <div class="placeholder">
+    <div class="top">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></span>
+      <h3>Entrevistas</h3>
+    </div>
+    <p style="margin:0 0 12px;font-size:13px;color:var(--text-muted)">Registro de entrevistas con transcripción en el dispositivo y resumen asistido. El audio nunca sale de tu celular.</p>
+    <div class="box"><b>Módulo en construcción</b>Se implementa en la Fase 6 del plan de construcción.</div>
+  </div>
+</body>
+</html>

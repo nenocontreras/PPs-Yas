@@ -1,0 +1,45 @@
+<!-- @dsCard group="Fundamentos" name="Tipografía" subtitle="Geist · escala y pesos" width="1120" height="760" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tipografía · Design System PPS</title>
+<style>
+  :root{color-scheme:light dark;
+    --slate-100:#f1f5f9;--slate-200:#e2e8f0;--slate-500:#64748b;--slate-900:#0f172a;--slate-950:#020617;
+    --bg:#f8fafc;--surface:#fff;--border:var(--slate-200);--text:var(--slate-900);--text-muted:var(--slate-500);
+    --font-sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--font-mono:ui-monospace,"SF Mono",Menlo,monospace}
+  @media (prefers-color-scheme:dark){:root{--bg:var(--slate-950);--surface:#0f172a;--border:#1e293b;--text:var(--slate-100);--text-muted:#94a3b8}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px;background:var(--bg);color:var(--text);font-family:var(--font-sans);line-height:1.5}
+  h1{font-size:20px;margin:0 0 4px}
+  p.lead{margin:0 0 24px;color:var(--text-muted);font-size:14px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  td{border-top:1px solid var(--border);padding:14px 8px;vertical-align:baseline}
+  td:first-child{width:120px;color:var(--text-muted);font-family:var(--font-mono);font-size:12px;white-space:nowrap}
+  td:last-child{width:150px;color:var(--text-muted);font-family:var(--font-mono);font-size:12px;text-align:right}
+  .s-xs{font-size:12px}.s-sm{font-size:14px}.s-base{font-size:16px}.s-lg{font-size:18px}
+  .s-xl{font-size:20px}.s-2xl{font-size:24px;letter-spacing:-.01em}.s-3xl{font-size:30px;letter-spacing:-.02em}
+  .w-normal{font-weight:400}.w-medium{font-weight:500}.w-semibold{font-weight:600}
+  .note{margin-top:24px;font-size:13px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+  code{font-family:var(--font-mono);font-size:.9em}
+</style>
+</head>
+<body>
+  <h1>Tipografía</h1>
+  <p class="lead">Familia <b>Geist</b> (cae a system-ui). Títulos con <code>letter-spacing</code> negativo y peso 600. Cuerpo en 14–16px. Mono: Geist Mono para datos, horas y código.</p>
+  <table>
+    <tr><td>text-3xl</td><td class="s-3xl w-semibold">Panel de progreso</td><td>30 / 600</td></tr>
+    <tr><td>text-2xl</td><td class="s-2xl w-semibold">Bitácora de práctica</td><td>24 / 600</td></tr>
+    <tr><td>text-xl</td><td class="s-xl w-semibold">Nueva jornada</td><td>20 / 600</td></tr>
+    <tr><td>text-lg</td><td class="s-lg w-medium">Tareas pendientes</td><td>18 / 500</td></tr>
+    <tr><td>text-base</td><td class="s-base w-normal">Registrá las horas y las tareas realizadas en cada jornada de tu PPS.</td><td>16 / 400</td></tr>
+    <tr><td>text-sm</td><td class="s-sm w-normal">Texto de apoyo y descripciones de módulo.</td><td>14 / 400</td></tr>
+    <tr><td>text-sm</td><td class="s-sm w-medium">Etiquetas de formulario</td><td>14 / 500</td></tr>
+    <tr><td>text-xs</td><td class="s-xs w-medium">HINT / AYUDA / METADATOS</td><td>12 / 500</td></tr>
+    <tr><td>mono</td><td class="s-lg w-semibold" style="font-family:var(--font-mono)">128,5 hs</td><td>Geist Mono</td></tr>
+  </table>
+  <div class="note">Regla: un solo nivel de <code>h1</code> por pantalla. Los números de horas siempre en mono para que alineen en las listas.</div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!-- @dsCard group="Fundamentos" name="Espaciado y radios" subtitle="Grilla de 4px · radios · touch targets" width="1120" height="720" -->
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Espaciado y radios · Design System PPS</title>
+<style>
+  :root{color-scheme:light dark;
+    --slate-200:#e2e8f0;--slate-500:#64748b;--slate-900:#0f172a;--slate-950:#020617;
+    --bg:#f8fafc;--surface:#fff;--border:var(--slate-200);--text:var(--slate-900);--text-muted:var(--slate-500);--primary:#0f172a;
+    --font-sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--font-mono:ui-monospace,Menlo,monospace}
+  @media (prefers-color-scheme:dark){:root{--bg:var(--slate-950);--surface:#0f172a;--border:#1e293b;--text:#f1f5f9;--text-muted:#94a3b8;--primary:#f1f5f9}}
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:14px;line-height:1.5}
+  h1{font-size:20px;margin:0 0 4px}
+  p.lead{margin:0 0 24px;color:var(--text-muted)}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin:24px 0 12px}
+  .scale .r{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+  .scale .r code{width:150px;font-family:var(--font-mono);font-size:12px;color:var(--text-muted)}
+  .scale .bar{height:16px;background:var(--primary);border-radius:3px}
+  .radii{display:flex;gap:16px;flex-wrap:wrap}
+  .radii .b{width:96px;height:96px;background:var(--surface);border:1px solid var(--border)}
+  .radii figure{margin:0;text-align:center}
+  .radii figcaption{margin-top:6px;font-family:var(--font-mono);font-size:11px;color:var(--text-muted)}
+  .touch{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+  .touch .t{width:44px;height:44px;border:1px dashed var(--text-muted);border-radius:8px;display:grid;place-items:center;font-size:10px;color:var(--text-muted)}
+</style>
+</head>
+<body>
+  <h1>Espaciado y radios</h1>
+  <p class="lead">Todo el espaciado es múltiplo de 4px. Radios generosos (la app se usa en el celular). Ningún control interactivo por debajo de 44px.</p>
+
+  <h2>Escala de espaciado</h2>
+  <div class="scale">
+    <div class="r"><code>--space-1 · 4px</code><div class="bar" style="width:4px"></div></div>
+    <div class="r"><code>--space-2 · 8px</code><div class="bar" style="width:8px"></div></div>
+    <div class="r"><code>--space-3 · 12px</code><div class="bar" style="width:12px"></div></div>
+    <div class="r"><code>--space-4 · 16px</code><div class="bar" style="width:16px"></div></div>
+    <div class="r"><code>--space-5 · 20px</code><div class="bar" style="width:20px"></div></div>
+    <div class="r"><code>--space-6 · 24px</code><div class="bar" style="width:24px"></div></div>
+    <div class="r"><code>--space-8 · 32px</code><div class="bar" style="width:32px"></div></div>
+    <div class="r"><code>--space-12 · 48px</code><div class="bar" style="width:48px"></div></div>
+  </div>
+
+  <h2>Radios</h2>
+  <div class="radii">
+    <figure><div class="b" style="border-radius:.375rem"></div><figcaption>--radius-sm</figcaption></figure>
+    <figure><div class="b" style="border-radius:.625rem"></div><figcaption>--radius</figcaption></figure>
+    <figure><div class="b" style="border-radius:.875rem"></div><figcaption>--radius-lg</figcaption></figure>
+    <figure><div class="b" style="border-radius:1rem"></div><figcaption>--radius-xl</figcaption></figure>
+    <figure><div class="b" style="border-radius:9999px"></div><figcaption>--radius-full</figcaption></figure>
+  </div>
+
+  <h2>Touch target mínimo</h2>
+  <div class="touch">
+    <div class="t">44px</div>
+    <span style="color:var(--text-muted)"><code style="font-family:var(--font-mono);font-size:12px">--touch-min: 2.75rem</code> — alto mínimo de botones, ítems de nav y filas tocables.</span>
+  </div>
+</body>
+</html>
