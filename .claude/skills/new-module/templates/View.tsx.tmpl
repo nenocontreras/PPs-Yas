@@ -1,0 +1,42 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { create__Module__, delete__Module__ } from "./actions";
+import type { __Module__Item } from "@/lib/__module__";
+
+export function __Module__View({ initialItems }: { initialItems: __Module__Item[] }) {
+  const [items] = useState(initialItems);
+  const [isPending, startTransition] = useTransition();
+
+  return (
+    <div className="mt-4 space-y-4">
+      <form
+        action={(formData) => startTransition(() => create__Module__(formData))}
+        className="flex flex-col gap-3"
+      >
+        {/* campos del dominio — inputs de una columna, labels en español */}
+        <button
+          type="submit"
+          disabled={isPending}
+          className="rounded-lg bg-black px-4 py-3 text-white disabled:opacity-50"
+        >
+          Guardar
+        </button>
+      </form>
+
+      <ul className="space-y-2">
+        {items.map((item) => (
+          <li key={item.id} className="rounded-lg border p-3">
+            {/* render del item */}
+            <button
+              onClick={() => startTransition(() => delete__Module__(item.id))}
+              className="text-sm text-red-600"
+            >
+              Borrar
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}

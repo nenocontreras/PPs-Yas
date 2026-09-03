@@ -1,0 +1,21 @@
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { list__Module__ } from "@/lib/__module__";
+import { __Module__View } from "./__Module__View";
+
+export default async function __Module__Page() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const items = await list__Module__(supabase, user.id);
+
+  return (
+    <main className="mx-auto w-full max-w-2xl px-4 py-6">
+      <h1 className="text-xl font-semibold">__Module__</h1>
+      <__Module__View initialItems={items} />
+    </main>
+  );
+}

@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+# Los hooks corren en bash: siempre LF, aunque el dev esté en Windows.
+*.sh text eol=lf
+
+# Binarios
+*.png binary
+*.ico binary
+*.woff2 binary

@@ -1,0 +1,56 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+const ROUTE = "/__MODULE__";
+
+async function requireUser() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  return { supabase, user };
+}
+
+export async function create__Module__(formData: FormData) {
+  const { supabase, user } = await requireUser();
+
+  const { error } = await supabase.from("__tabla__").insert({
+    user_id: user.id,
+    // ...campos desde formData
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath(ROUTE);
+}
+
+export async function update__Module__(id: string, formData: FormData) {
+  const { supabase, user } = await requireUser();
+
+  const { error } = await supabase
+    .from("__tabla__")
+    .update({
+      // ...campos desde formData
+    })
+    .eq("id", id)
+    .eq("user_id", user.id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath(ROUTE);
+}
+
+export async function delete__Module__(id: string) {
+  const { supabase, user } = await requireUser();
+
+  const { error } = await supabase
+    .from("__tabla__")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath(ROUTE);
+}
