@@ -10,8 +10,10 @@ import { cn } from "@/lib/cn";
 import {
   type Evento,
   TIPOS,
+  TIPO_COLOR,
   TIPO_LABEL,
 } from "@/lib/calendario";
+import type { Enums } from "@/lib/database.types";
 import {
   WEEKDAYS_MON,
   addMonths,
@@ -24,6 +26,9 @@ import { type FormState, OK } from "@/lib/form";
 
 import { createEvento, deleteEvento, updateEvento } from "./actions";
 
+type Tipo = Enums<"evento_tipo">;
+type Preview = { fecha: string; tipo: Tipo };
+
 export function CalendarioView({ eventos }: { eventos: Evento[] }) {
   const today = todayISO();
   const now = new Date();
@@ -34,6 +39,7 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
   const [selected, setSelected] = useState<string>(today);
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [preview, setPreview] = useState<Preview | null>(null);
 
   const byDate = useMemo(() => {
     const map = new Map<string, Evento[]>();
@@ -45,15 +51,27 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
     return map;
   }, [eventos]);
 
+  /** Tipos distintos con evento en un día (+ el que se está por agendar). */
+  const tiposDelDia = (iso: string): Tipo[] => {
+    const set = new Set<Tipo>((byDate.get(iso) ?? []).map((e) => e.tipo));
+    if (preview && preview.fecha === iso) set.add(preview.tipo);
+    return TIPOS.filter((t) => set.has(t));
+  };
+
   const grid = useMemo(
     () => buildMonthGrid(cursor.year, cursor.month0),
     [cursor],
   );
 
-  const delMes = (delta: number) => {
-    setCursor((c) => addMonths(c.year, c.month0, delta));
+  const closeForms = () => {
     setAdding(false);
     setEditingId(null);
+    setPreview(null);
+  };
+
+  const delMes = (delta: number) => {
+    setCursor((c) => addMonths(c.year, c.month0, delta));
+    closeForms();
   };
 
   const selectedEventos = byDate.get(selected) ?? [];
@@ -93,9 +111,18 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
 
         <div className="mt-1 grid grid-cols-7 gap-1">
           {grid.map((cell) => {
-            const has = byDate.has(cell.iso);
+            const tipos = tiposDelDia(cell.iso);
             const isToday = cell.iso === today;
             const isSel = cell.iso === selected;
+            // Tinte de la celda: color del (único) tipo del día, o del que se
+            // está por agendar en ese día.
+            const tintTipo =
+              preview && preview.fecha === cell.iso
+                ? preview.tipo
+                : tipos.length === 1
+                  ? tipos[0]
+                  : null;
+
             return (
               <button
                 key={cell.iso}
@@ -106,30 +133,40 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
                 }}
                 aria-pressed={isSel}
                 aria-current={isToday ? "date" : undefined}
+                style={
+                  !isSel && tintTipo
+                    ? { backgroundColor: `${TIPO_COLOR[tintTipo]}1f` }
+                    : undefined
+                }
                 className={cn(
                   "flex aspect-square flex-col items-center justify-center gap-1 rounded-lg text-sm transition-colors",
                   !cell.inMonth && "text-line-strong",
                   cell.inMonth && !isSel && "text-ink hover:bg-surface-2",
                   isSel && "bg-primary font-semibold text-primary-fg",
-                  !isSel && isToday && "ring-1 ring-inset ring-primary font-semibold",
+                  !isSel &&
+                    isToday &&
+                    "font-semibold ring-1 ring-inset ring-primary",
                 )}
               >
                 {cell.day}
-                <span
-                  className={cn(
-                    "h-1 w-1 rounded-full",
-                    has
-                      ? isSel
-                        ? "bg-primary-fg"
-                        : "bg-primary"
-                      : "bg-transparent",
-                  )}
-                  aria-hidden
-                />
+                <span className="flex h-1 items-center gap-0.5">
+                  {tipos.slice(0, 3).map((t) => (
+                    <span
+                      key={t}
+                      className={cn(
+                        "h-1 w-1 rounded-full",
+                        isSel && "bg-primary-fg",
+                      )}
+                      style={isSel ? undefined : { backgroundColor: TIPO_COLOR[t] }}
+                    />
+                  ))}
+                </span>
               </button>
             );
           })}
         </div>
+
+        <Legend />
       </div>
 
       <div className="mt-5 flex items-center justify-between gap-3">
@@ -137,7 +174,14 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
           {formatFecha(selected)}
         </h2>
         {!adding && (
-          <Button size="sm" onClick={() => setAdding(true)}>
+          <Button
+            size="sm"
+            onClick={() => {
+              setAdding(true);
+              setEditingId(null);
+              setPreview({ fecha: selected, tipo: "otro" });
+            }}
+          >
             Agregar evento
           </Button>
         )}
@@ -148,8 +192,9 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
           <EventoForm
             defaultFecha={selected}
             action={createEvento}
-            onDone={() => setAdding(false)}
-            onCancel={() => setAdding(false)}
+            onPreview={setPreview}
+            onDone={closeForms}
+            onCancel={closeForms}
           />
         </div>
       )}
@@ -170,19 +215,40 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
                 evento={e}
                 defaultFecha={e.fecha}
                 action={updateEvento.bind(null, e.id)}
-                onDone={() => setEditingId(null)}
-                onCancel={() => setEditingId(null)}
+                onPreview={setPreview}
+                onDone={closeForms}
+                onCancel={closeForms}
               />
             </div>
           ) : (
             <EventoCard
               key={e.id}
               evento={e}
-              onEdit={() => setEditingId(e.id)}
+              onEdit={() => {
+                setEditingId(e.id);
+                setAdding(false);
+                setPreview({ fecha: e.fecha, tipo: e.tipo });
+              }}
             />
           ),
         )}
       </div>
+    </div>
+  );
+}
+
+function Legend() {
+  return (
+    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 text-[11px] text-muted">
+      {TIPOS.map((t) => (
+        <span key={t} className="inline-flex items-center gap-1.5">
+          <span
+            className="h-2 w-2 rounded-full"
+            style={{ backgroundColor: TIPO_COLOR[t] }}
+          />
+          {TIPO_LABEL[t]}
+        </span>
+      ))}
     </div>
   );
 }
@@ -197,7 +263,13 @@ function EventoCard({
   const [pending, startTransition] = useTransition();
   return (
     <article className="flex items-center gap-3 rounded-xl border border-line bg-surface p-3">
-      <span className="rounded-md bg-surface-2 px-2 py-0.5 text-[11px] font-medium text-muted">
+      <span
+        className="inline-flex items-center gap-1.5 rounded-md bg-surface-2 px-2 py-0.5 text-[11px] font-medium text-muted"
+      >
+        <span
+          className="h-1.5 w-1.5 rounded-full"
+          style={{ backgroundColor: TIPO_COLOR[evento.tipo] }}
+        />
         {TIPO_LABEL[evento.tipo]}
       </span>
       <span className="min-w-0 flex-1 truncate text-sm font-medium">
@@ -227,15 +299,20 @@ function EventoForm({
   evento,
   defaultFecha,
   action,
+  onPreview,
   onDone,
   onCancel,
 }: {
   evento?: Evento;
   defaultFecha: string;
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
+  onPreview: (p: Preview) => void;
   onDone: () => void;
   onCancel: () => void;
 }) {
+  const [fecha, setFecha] = useState(evento?.fecha ?? defaultFecha);
+  const [tipo, setTipo] = useState<Tipo>(evento?.tipo ?? "otro");
+
   const wrapped = async (prev: FormState, formData: FormData) => {
     const result = await action(prev, formData);
     if (result.ok) onDone();
@@ -264,13 +341,22 @@ function EventoForm({
           name="fecha"
           type="date"
           required
-          defaultValue={evento?.fecha ?? defaultFecha}
+          value={fecha}
+          onChange={(e) => {
+            setFecha(e.target.value);
+            if (e.target.value) onPreview({ fecha: e.target.value, tipo });
+          }}
           error={fe.fecha}
         />
         <Select
           label="Tipo"
           name="tipo"
-          defaultValue={evento?.tipo ?? "otro"}
+          value={tipo}
+          onChange={(e) => {
+            const next = e.target.value as Tipo;
+            setTipo(next);
+            onPreview({ fecha, tipo: next });
+          }}
         >
           {TIPOS.map((t) => (
             <option key={t} value={t}>

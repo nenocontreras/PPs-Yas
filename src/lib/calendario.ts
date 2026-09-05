@@ -18,6 +18,14 @@ export const TIPO_LABEL: Record<Enums<"evento_tipo">, string> = {
   otro: "Otro",
 };
 
+/** Color por tipo de evento (se usa para tintar la celda del día y el punto). */
+export const TIPO_COLOR: Record<Enums<"evento_tipo">, string> = {
+  jornada: "#6366f1", // indigo
+  entrega: "#d97706", // ámbar
+  hito: "#059669", // esmeralda
+  otro: "#64748b", // slate
+};
+
 export async function listEventos(
   supabase: SupabaseClient<Database>,
   userId: string,
