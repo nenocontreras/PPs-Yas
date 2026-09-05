@@ -9,10 +9,10 @@ Pensada para uso individual pero **reutilizable por otros estudiantes** vía cue
 separadas. El contexto completo y las reglas del proyecto están en
 [`CLAUDE.md`](./CLAUDE.md).
 
-> **Estado:** Fase 2 — esqueleto navegable, instalable como PWA, con
-> autenticación (Supabase Auth: registro con confirmación por email, login,
-> recuperación de contraseña, logout, rutas protegidas). Todavía sin módulos
-> funcionales.
+> **Estado:** Fase 3 — auth completa + módulos de **Bitácora**, **Tareas** y
+> **Calendario** con CRUD de punta a punta. Falta aplicar las migraciones de
+> `supabase/migrations/` (ver abajo). Siguen: Evidencia, Panel de progreso,
+> Entrevistas, Búsqueda.
 
 ## Principio no negociable: "código público, datos privados"
 
@@ -93,8 +93,30 @@ de "falta configurar Supabase") pero no funciona la autenticación.
    defecto, así que este paso es opcional.
 
 No hay migraciones SQL en esta fase: la autenticación usa solo `auth.users`, que
-Supabase administra. Las tablas de datos empiezan en la Fase 3
-(`supabase/migrations/`).
+Supabase administra.
+
+## Migraciones (Fase 3 en adelante)
+
+Las tablas viven en `supabase/migrations/` (`0001_init` … `0004_eventos`). Cada
+tabla nace con `user_id` + RLS + las 4 policies en el mismo archivo
+(`.claude/skills/supabase-rls-schema`). Validar antes de commitear:
+
+```bash
+bash .claude/skills/create-migration/scripts/validate_rls.sh supabase/migrations/*.sql
+```
+
+**Aplicarlas** (elegí una):
+- **SQL Editor de Supabase**: pegar el contenido de cada archivo en orden
+  (`0001` → `0004`) y ejecutar.
+- **Supabase CLI**: `npx supabase link --project-ref <TU_PROJECT_ID>` y luego
+  `npx supabase db push`.
+
+**Regenerar los tipos** tras aplicar (opcional pero recomendado —
+`src/lib/database.types.ts` está escrito a mano por ahora):
+
+```bash
+npx supabase gen types typescript --project-id <TU_PROJECT_ID> > src/lib/database.types.ts
+```
 
 ## PWA
 
@@ -131,15 +153,20 @@ autenticar `supabase` (login por navegador). Para aplicar migraciones se usa
 ```
 src/
   app/
-    (dashboard)/        # layout con navegación + páginas de cada módulo
-      bitacora/  tareas/  evidencia/  calendario/  entrevistas/  busqueda/
-      layout.tsx  page.tsx
+    (auth)/             # login, registro, recuperar, actualizar-password, verifica-tu-email
+    (dashboard)/        # layout con navegación + un módulo por carpeta
+      bitacora/  tareas/  calendario/     # Fase 3: page.tsx + <Modulo>-view.tsx + actions.ts
+      evidencia/  entrevistas/  busqueda/ # placeholders (Fases 4, 6, 7)
+    auth/confirm/       # route handler de los links de email
     ~offline/           # fallback offline de la PWA
-    layout.tsx  manifest.ts  sw.ts  globals.css
-  components/           # UI reutilizable (navegación, íconos, placeholders)
+    proxy.ts (en src/)  # refresca sesión + protege el dashboard
+  components/ui/        # Button, TextField, AuthCard, Alert, StatusPill, HoursProgress, …
   lib/
     modules.ts          # metadatos de los módulos (fuente única para la nav)
-    supabase/            # clientes browser y server (@supabase/ssr)
+    database.types.ts   # tipos del esquema (a mano; regenerar con supabase gen types)
+    bitacora.ts  tareas.ts  calendario.ts   # queries tipadas por módulo
+    supabase/            # clientes browser / server / proxy + requireUser
+supabase/migrations/    # 0001_init … 0004_eventos
 ```
 
 Convenciones de esquema y RLS: `.claude/skills/supabase-rls-schema/SKILL.md`.

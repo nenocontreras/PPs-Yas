@@ -57,6 +57,7 @@ export function Button({
   className,
   children,
   disabled,
+  type,
   ...props
 }: ButtonProps) {
   const classes = cn(buttonClasses({ variant, size, block }), className);
@@ -69,7 +70,12 @@ export function Button({
   }
 
   return (
-    <button className={classes} disabled={disabled || loading} {...props}>
+    <button
+      type={type ?? "button"}
+      className={classes}
+      disabled={disabled || loading}
+      {...props}
+    >
       {loading && <Spinner />}
       {children as ReactNode}
     </button>
