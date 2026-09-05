@@ -1,8 +1,76 @@
 @import "tailwindcss";
 
+/* ============================================================================
+   Design tokens — espejo de design-system/_tokens.css (fuente canónica).
+   Los valores crudos viven en :root / @media dark; @theme inline los expone
+   como utilidades de Tailwind (bg-surface, text-muted, border-line, …).
+   ========================================================================== */
+:root {
+  color-scheme: light dark;
+
+  --bg: #f8fafc; /* slate-50 */
+  --surface: #ffffff;
+  --surface-2: #f1f5f9; /* slate-100 */
+  --line: #e2e8f0; /* slate-200 */
+  --line-strong: #cbd5e1; /* slate-300 */
+  --text: #0f172a; /* slate-900 */
+  --text-muted: #64748b; /* slate-500 */
+  --primary: #0f172a;
+  --primary-fg: #ffffff;
+  --primary-hover: #334155; /* slate-700 */
+  --success: #15803d;
+  --success-bg: #dcfce7;
+  --warning: #b45309;
+  --warning-bg: #fef3c7;
+  --danger: #b91c1c;
+  --danger-bg: #fee2e2;
+  --focus: #6366f1;
+
+  --touch-min: 2.75rem; /* 44px */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #020617; /* slate-950 */
+    --surface: #0f172a; /* slate-900 */
+    --surface-2: #1e293b; /* slate-800 */
+    --line: #1e293b;
+    --line-strong: #334155;
+    --text: #f1f5f9; /* slate-100 */
+    --text-muted: #94a3b8; /* slate-400 */
+    --primary: #f1f5f9;
+    --primary-fg: #0f172a;
+    --primary-hover: #cbd5e1;
+    --success: #4ade80;
+    --success-bg: #14532d;
+    --warning: #fbbf24;
+    --warning-bg: #78350f;
+    --danger: #f87171;
+    --danger-bg: #7f1d1d;
+  }
+}
+
 @theme inline {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--text);
+  --color-muted: var(--text-muted);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-primary-hover: var(--primary-hover);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-focus: var(--focus);
 }
 
 html {
@@ -11,4 +79,11 @@ html {
 
 body {
   font-family: var(--font-sans);
+}
+
+/* Anillo de foco consistente para todo control interactivo. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
 }

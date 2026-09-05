@@ -16,3 +16,11 @@ export function getSupabaseEnv() {
 
   return { url, anonKey };
 }
+
+/** Chequeo sin excepción: útil en el middleware para no romper toda la app si falta la config. */
+export function hasSupabaseEnv(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+}

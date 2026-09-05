@@ -9,8 +9,10 @@ Pensada para uso individual pero **reutilizable por otros estudiantes** vía cue
 separadas. El contexto completo y las reglas del proyecto están en
 [`CLAUDE.md`](./CLAUDE.md).
 
-> **Estado:** Fase 1 — esqueleto navegable e instalable como PWA. Todavía sin
-> módulos funcionales ni autenticación.
+> **Estado:** Fase 2 — esqueleto navegable, instalable como PWA, con
+> autenticación (Supabase Auth: registro con confirmación por email, login,
+> recuperación de contraseña, logout, rutas protegidas). Todavía sin módulos
+> funcionales.
 
 ## Principio no negociable: "código público, datos privados"
 
@@ -64,10 +66,35 @@ Se definen en `.env.local` (en `.gitignore`, nunca se commitea). La plantilla es
 |----------|--------|----------|
 | `NEXT_PUBLIC_SUPABASE_URL` | cliente + servidor | URL del proyecto Supabase |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | cliente + servidor | Clave anónima (pública por diseño; el aislamiento lo hace RLS) |
+| `NEXT_PUBLIC_SITE_URL` | cliente + servidor | URL pública del sitio para los links de email de Supabase. Vacío en local (usa `localhost:3000`); en Vercel se resuelve solo vía `VERCEL_URL` si no lo definís |
 | `ANTHROPIC_API_KEY` | **solo servidor** | Resumen de entrevistas (Fase 6). Nunca con prefijo `NEXT_PUBLIC_` |
 
-Sin las dos variables de Supabase la app arranca pero tira un error claro al
-instanciar el cliente.
+Sin las dos variables de Supabase la app arranca (el dashboard muestra un aviso
+de "falta configurar Supabase") pero no funciona la autenticación.
+
+## Configurar Supabase (Fase 2 — Auth)
+
+1. Crear un proyecto en [supabase.com](https://supabase.com) (plan free alcanza).
+2. **Project Settings → API**: copiar `Project URL` y `anon public` key a
+   `.env.local` (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
+3. **Authentication → URL Configuration**:
+   - *Site URL*: `http://localhost:3000` (y la URL de Vercel en producción).
+   - *Redirect URLs*: agregar `http://localhost:3000/auth/confirm` y
+     `https://<tu-deploy>.vercel.app/auth/confirm`.
+4. **Authentication → Providers → Email**: dejar *Confirm email* **activado**
+   (el flujo de la app espera confirmación). Para desarrollo alcanza con el
+   servidor de email de prueba de Supabase; para producción configurar SMTP
+   propio en *Authentication → Emails*.
+5. *(Opcional, recomendado)* **Authentication → Emails → Confirm signup** y
+   **Reset password**: cambiar el template para que el link apunte a
+   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email` (y
+   `type=recovery` + `&next=/actualizar-password` en el de reset). El route
+   handler `src/app/auth/confirm/route.ts` también soporta el flujo `?code=` por
+   defecto, así que este paso es opcional.
+
+No hay migraciones SQL en esta fase: la autenticación usa solo `auth.users`, que
+Supabase administra. Las tablas de datos empiezan en la Fase 3
+(`supabase/migrations/`).
 
 ## PWA
 

@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     "public/sw.js",
     "public/sw.js.map",
     "public/swe-worker-*.js",
+    // Design system: previews y runtime de Claude Design, no es código de la app.
+    "design-system/**",
   ]),
 ]);
 

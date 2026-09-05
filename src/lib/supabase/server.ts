@@ -11,8 +11,11 @@ import { getSupabaseEnv } from "./env";
  * escribir cookies); en ese caso el middleware es el que refresca la sesión.
  */
 export async function createClient() {
-  const { url, anonKey } = getSupabaseEnv();
+  // `cookies()` primero: marca la ruta como dinámica antes de que un posible
+  // error de env corte el render (si no, Next intenta prerenderizar y falla el
+  // build cuando todavía no hay .env.local).
   const cookieStore = await cookies();
+  const { url, anonKey } = getSupabaseEnv();
 
   return createServerClient(url, anonKey, {
     cookies: {
