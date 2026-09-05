@@ -2,6 +2,8 @@
 -- Estado con enum; `bloque` es texto libre para asociar a la Ficha Maestra
 -- (ej. "Bloque 3").
 
+begin;
+
 create type public.tarea_estado as enum ('pendiente', 'en_curso', 'completada');
 
 create table public.tareas (
@@ -21,17 +23,19 @@ create index tareas_user_estado_idx on public.tareas (user_id, estado);
 alter table public.tareas enable row level security;
 
 create policy "tareas_select_own" on public.tareas
-  for select using (auth.uid() = user_id);
+  for select to authenticated using (auth.uid() = user_id);
 
 create policy "tareas_insert_own" on public.tareas
-  for insert with check (auth.uid() = user_id);
+  for insert to authenticated with check (auth.uid() = user_id);
 
 create policy "tareas_update_own" on public.tareas
-  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 create policy "tareas_delete_own" on public.tareas
-  for delete using (auth.uid() = user_id);
+  for delete to authenticated using (auth.uid() = user_id);
 
 create trigger tareas_set_updated_at
   before update on public.tareas
   for each row execute function public.set_updated_at();
+
+commit;

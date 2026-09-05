@@ -2,6 +2,8 @@
 -- Una fila por jornada de PPS. Las horas se acumulan hacia el mínimo
 -- reglamentario de 130 hs (máx. de referencia 200 hs).
 
+begin;
+
 create table public.jornadas (
   id                 uuid primary key default gen_random_uuid(),
   user_id            uuid not null references auth.users(id) on delete cascade,
@@ -19,17 +21,19 @@ create index jornadas_user_fecha_idx on public.jornadas (user_id, fecha desc);
 alter table public.jornadas enable row level security;
 
 create policy "jornadas_select_own" on public.jornadas
-  for select using (auth.uid() = user_id);
+  for select to authenticated using (auth.uid() = user_id);
 
 create policy "jornadas_insert_own" on public.jornadas
-  for insert with check (auth.uid() = user_id);
+  for insert to authenticated with check (auth.uid() = user_id);
 
 create policy "jornadas_update_own" on public.jornadas
-  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 create policy "jornadas_delete_own" on public.jornadas
-  for delete using (auth.uid() = user_id);
+  for delete to authenticated using (auth.uid() = user_id);
 
 create trigger jornadas_set_updated_at
   before update on public.jornadas
   for each row execute function public.set_updated_at();
+
+commit;
