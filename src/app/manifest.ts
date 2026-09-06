@@ -12,12 +12,16 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     scope: "/",
     display: "standalone",
+    display_override: ["standalone", "minimal-ui"],
     orientation: "portrait",
     lang: "es-AR",
     dir: "ltr",
     background_color: "#ffffff",
     theme_color: "#0f172a",
     categories: ["education", "productivity"],
+    prefer_related_applications: false,
+    // TODO Fase 8: agregar `screenshots` (1-2 capturas reales, 390x844 narrow)
+    // para el diálogo de instalación enriquecido de Chrome Android.
     icons: [
       {
         src: "/icons/icon-192.png",

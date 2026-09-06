@@ -108,7 +108,7 @@ export function PanelProgreso({
           <h2 className="text-sm font-semibold">Tareas</h2>
           <Link
             href="/tareas"
-            className="text-xs text-muted hover:text-ink hover:underline"
+            className="-mr-2 inline-flex min-h-9 items-center rounded-md px-2 text-xs text-muted hover:text-ink hover:underline"
           >
             Ver todas
           </Link>
@@ -136,7 +136,7 @@ export function PanelProgreso({
           <h2 className="text-sm font-semibold">Próximos eventos</h2>
           <Link
             href="/calendario"
-            className="text-xs text-muted hover:text-ink hover:underline"
+            className="-mr-2 inline-flex min-h-9 items-center rounded-md px-2 text-xs text-muted hover:text-ink hover:underline"
           >
             Ver agenda
           </Link>
@@ -168,26 +168,29 @@ export function PanelProgreso({
         )}
       </section>
 
-      {/* Entrevistas (se completa en la Fase 6) */}
-      <section className="flex items-center gap-3 rounded-xl border border-line bg-surface p-4">
+      {/* Entrevistas */}
+      <Link
+        href="/entrevistas"
+        className="flex items-center gap-3 rounded-xl border border-line bg-surface p-4 transition-colors hover:border-line-strong hover:bg-surface-2"
+      >
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-surface-2 text-slate-700 dark:text-slate-200">
           <InterviewIcon className="h-5 w-5" />
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold">
-            {data.entrevistasCount} entrevistas registradas
+            {data.entrevistasCount}{" "}
+            {data.entrevistasCount === 1
+              ? "entrevista registrada"
+              : "entrevistas registradas"}
           </p>
           <p className="text-[11px] text-muted">
-            El módulo de entrevistas se activa en la Fase 6.
+            Transcripción en tu dispositivo · resumen asistido
           </p>
         </div>
-        <Link
-          href="/entrevistas"
-          className="shrink-0 text-xs text-muted hover:text-ink hover:underline"
-        >
-          Ver
-        </Link>
-      </section>
+        <span className="shrink-0 text-xs text-muted" aria-hidden>
+          →
+        </span>
+      </Link>
     </div>
   );
 }

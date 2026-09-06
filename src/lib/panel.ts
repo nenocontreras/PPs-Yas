@@ -79,7 +79,7 @@ export async function getPanelData(
   supabase: SupabaseClient<Database>,
   userId: string,
 ): Promise<PanelData> {
-  const [jornadasRes, tareasRes, eventosRes] = await Promise.all([
+  const [jornadasRes, tareasRes, eventosRes, entrevistasRes] = await Promise.all([
     supabase.from("jornadas").select("horas, fecha").eq("user_id", userId),
     supabase.from("tareas").select("estado").eq("user_id", userId),
     supabase
@@ -89,6 +89,10 @@ export async function getPanelData(
       .gte("fecha", hoyAR())
       .order("fecha", { ascending: true })
       .limit(5),
+    supabase
+      .from("entrevistas")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId),
   ]);
 
   if (jornadasRes.error) throw new Error(jornadasRes.error.message);
@@ -110,7 +114,7 @@ export async function getPanelData(
     jornadasCount: jornadas.length,
     tareas,
     proximosEventos: eventosRes.data ?? [],
-    entrevistasCount: 0,
+    entrevistasCount: entrevistasRes.count ?? 0,
     ritmo: calcularRitmo(
       jornadas.map((j) => j.fecha),
       totalHoras,
