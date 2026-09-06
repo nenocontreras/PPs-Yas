@@ -19,7 +19,7 @@ Sos el revisor de confidencialidad de este proyecto. El repo es **público desde
 ## Cómo trabajar
 
 - `git status` / `git diff` para ver qué cambió (si hay repo git). Si no, revisá los archivos de los módulos entrevistas/evidencia y `supabase/`.
-- `grep -rniE "empresa-demo|<otros términos de .claude/hooks/forbidden-terms.txt>" src supabase` .
+- `grep -rniIf .claude/hooks/forbidden-terms.txt src supabase` (nombre real de la empresa + apellidos; ese archivo no se versiona).
 - `grep -rniE "sk-ant-|service_role|SUPABASE_.*KEY" .` (excluí `.env.example`).
 - Revisá `git log --oneline` y, si sospechás, `git log -p` por secretos en el historial.
 - Para el módulo de entrevistas: seguí el flujo del audio de punta a punta y confirmá que termina en el navegador.

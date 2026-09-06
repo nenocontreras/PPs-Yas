@@ -40,6 +40,6 @@ Si un hook marca un falso positivo, corregí el patrón en `.claude/hooks/forbid
 - [ ] Ningún `route.ts` / Server Action recibe audio.
 - [ ] `entrevistas` no tiene columna de audio.
 - [ ] Ningún envío a la API de Claude incluye algo que no sea texto.
-- [ ] `grep -ri "empresa-demo\|<nombres reales>"` sobre `src/`, migraciones y seeds → 0 resultados.
+- [ ] `grep -rif .claude/hooks/forbidden-terms.txt src supabase` (nombre de la empresa + apellidos) → 0 resultados.
 - [ ] `git log -p | grep -i "sk-ant-\|service_role\|SUPABASE.*KEY"` → 0 resultados.
 - [ ] `.env.local` está en `.gitignore` y nunca fue commiteado.
