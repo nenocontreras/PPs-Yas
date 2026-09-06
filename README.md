@@ -9,9 +9,9 @@ Pensada para uso individual pero **reutilizable por otros estudiantes** vía cue
 separadas. El contexto completo y las reglas del proyecto están en
 [`CLAUDE.md`](./CLAUDE.md).
 
-> **Estado:** Fase 3 — auth completa + módulos de **Bitácora**, **Tareas** y
-> **Calendario** con CRUD de punta a punta. Falta aplicar las migraciones de
-> `supabase/migrations/` (ver abajo). Siguen: Evidencia, Panel de progreso,
+> **Estado:** Fase 4 — auth + **Bitácora**, **Tareas**, **Calendario** y
+> **Banco de evidencia** (Supabase Storage, bucket privado). Aplicá las
+> migraciones de `supabase/migrations/` (ver abajo). Siguen: Panel de progreso,
 > Entrevistas, Búsqueda.
 
 ## Principio no negociable: "código público, datos privados"
@@ -97,9 +97,16 @@ Supabase administra.
 
 ## Migraciones (Fase 3 en adelante)
 
-Las tablas viven en `supabase/migrations/` (`0001_init` … `0004_eventos`). Cada
-tabla nace con `user_id` + RLS + las 4 policies en el mismo archivo
-(`.claude/skills/supabase-rls-schema`). Validar antes de commitear:
+Las tablas viven en `supabase/migrations/` (`0001_init` … `0005_evidencia`).
+Cada tabla nace con `user_id` + RLS + las 4 policies en el mismo archivo
+(`.claude/skills/supabase-rls-schema`). `0005_evidencia` además crea el bucket
+privado de Storage `evidencia` y sus policies sobre `storage.objects` (mismo
+criterio de dueño: el primer segmento de la ruta es el `user_id`). Si el
+`insert into storage.buckets` de esa migración falla por permisos en el SQL
+Editor, creá el bucket **antes** desde el panel (**Storage → New bucket →
+nombre `evidencia`, Private, límite 10 MB**) y después corré la migración (el
+`on conflict do nothing` deja pasar el bucket ya existente). Validar antes de
+commitear:
 
 ```bash
 bash .claude/skills/create-migration/scripts/validate_rls.sh supabase/migrations/*.sql

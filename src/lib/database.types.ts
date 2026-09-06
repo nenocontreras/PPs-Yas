@@ -113,12 +113,61 @@ export type Database = {
         };
         Relationships: [];
       };
+      evidencia: {
+        Row: {
+          id: string;
+          user_id: string;
+          titulo: string;
+          tipo: Database["public"]["Enums"]["evidencia_tipo"];
+          etiquetas: string[];
+          fecha_captura: string | null;
+          notas: string | null;
+          storage_path: string;
+          mime_type: string | null;
+          size_bytes: number | null;
+        } & TimestampCols;
+        Insert: {
+          id?: string;
+          user_id: string;
+          titulo: string;
+          tipo?: Database["public"]["Enums"]["evidencia_tipo"];
+          etiquetas?: string[];
+          fecha_captura?: string | null;
+          notas?: string | null;
+          storage_path: string;
+          mime_type?: string | null;
+          size_bytes?: number | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          titulo?: string;
+          tipo?: Database["public"]["Enums"]["evidencia_tipo"];
+          etiquetas?: string[];
+          fecha_captura?: string | null;
+          notas?: string | null;
+          storage_path?: string;
+          mime_type?: string | null;
+          size_bytes?: number | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: Record<never, never>;
     Enums: {
       tarea_estado: "pendiente" | "en_curso" | "completada";
       evento_tipo: "jornada" | "entrega" | "hito" | "otro";
+      evidencia_tipo:
+        | "documento"
+        | "captura"
+        | "nota"
+        | "organigrama"
+        | "otro";
     };
     CompositeTypes: Record<never, never>;
   };

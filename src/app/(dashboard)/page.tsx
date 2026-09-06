@@ -38,7 +38,8 @@ export default async function InicioPage({ searchParams }: PageProps<"/">) {
       <div className="mt-6 rounded-xl border border-line bg-surface p-4">
         <p className="text-sm font-medium">Próximo paso</p>
         <p className="mt-1 text-sm text-muted">
-          Fase 4: Banco de evidencia. Bitácora, Tareas y Calendario ya funcionan.
+          Fase 5: panel de progreso. Bitácora, Tareas, Calendario y Evidencia ya
+          funcionan.
         </p>
       </div>
 
