@@ -113,6 +113,49 @@ export type Database = {
         };
         Relationships: [];
       };
+      entrevistas: {
+        Row: {
+          id: string;
+          user_id: string;
+          puesto: string;
+          area: string | null;
+          fecha: string | null;
+          duracion_estimada: number | null;
+          consentimiento_registrado: boolean;
+          transcripcion: string | null;
+          resumen: string | null;
+          temas_detectados: Json | null;
+        } & TimestampCols;
+        Insert: {
+          id?: string;
+          user_id: string;
+          puesto: string;
+          area?: string | null;
+          fecha?: string | null;
+          duracion_estimada?: number | null;
+          consentimiento_registrado?: boolean;
+          transcripcion?: string | null;
+          resumen?: string | null;
+          temas_detectados?: Json | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          puesto?: string;
+          area?: string | null;
+          fecha?: string | null;
+          duracion_estimada?: number | null;
+          consentimiento_registrado?: boolean;
+          transcripcion?: string | null;
+          resumen?: string | null;
+          temas_detectados?: Json | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       evidencia: {
         Row: {
           id: string;

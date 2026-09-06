@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 
-import { ModulePlaceholder } from "@/components/module-placeholder";
+import { listEntrevistas } from "@/lib/entrevistas";
+import { requireUser } from "@/lib/supabase/require-user";
+
+import { EntrevistasView } from "./entrevistas-view";
 
 export const metadata: Metadata = { title: "Entrevistas" };
 
-export default function EntrevistasPage() {
-  return <ModulePlaceholder href="/entrevistas" />;
+export default async function EntrevistasPage() {
+  const { supabase, user } = await requireUser();
+  const entrevistas = await listEntrevistas(supabase, user.id);
+  return <EntrevistasView entrevistas={entrevistas} />;
 }

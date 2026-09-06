@@ -9,11 +9,11 @@ Pensada para uso individual pero **reutilizable por otros estudiantes** vía cue
 separadas. El contexto completo y las reglas del proyecto están en
 [`CLAUDE.md`](./CLAUDE.md).
 
-> **Estado:** Fase 5 — auth + **Bitácora**, **Tareas**, **Calendario**,
-> **Banco de evidencia** y **Panel de progreso** (pantalla de inicio: horas
-> acumuladas, tareas por estado, próximos eventos, entrevistas en 0). Aplicá
-> las migraciones de `supabase/migrations/` (ver abajo). Siguen: Entrevistas,
-> Búsqueda, pulido PWA.
+> **Estado:** Fase 6 — auth + Bitácora, Tareas, Calendario, Evidencia, Panel de
+> progreso y **Entrevistas** (transcripción con Whisper 100% en el dispositivo +
+> resumen vía API de Claude sobre el texto ya anonimizado). Aplicá las
+> migraciones de `supabase/migrations/` (ver abajo) y, para el resumen, seteá
+> `ANTHROPIC_API_KEY`. Siguen: Búsqueda, pulido PWA.
 
 ## Principio no negociable: "código público, datos privados"
 
@@ -125,6 +125,21 @@ bash .claude/skills/create-migration/scripts/validate_rls.sh supabase/migrations
 ```bash
 npx supabase gen types typescript --project-id <TU_PROJECT_ID> > src/lib/database.types.ts
 ```
+
+## Entrevistas (Fase 6)
+
+- **Transcripción**: 100% en el navegador con `@huggingface/transformers`
+  (Whisper `onnx-community/whisper-base`, WebGPU si está disponible, si no WASM).
+  El audio **nunca** se sube: va del `<input>`/`MediaRecorder` → `AudioContext`
+  → Web Worker, y nada más. La tabla `entrevistas` no tiene columna de audio.
+- El modelo (~40 MB) se descarga del CDN de Hugging Face **al navegador** la
+  primera vez y queda cacheado.
+- `/entrevistas/*` sirve cabeceras `COOP: same-origin` + `COEP: credentialless`
+  (solo esa ruta) para habilitar los threads WASM. No afecta a Evidencia.
+- **Resumen**: server action → API de Claude (`claude-sonnet-5`) con **solo** el
+  texto transcripto que el usuario ya editó y anonimizó. Necesita
+  `ANTHROPIC_API_KEY` en el entorno del servidor (Vercel → Environment
+  Variables); sin ella, el módulo funciona salvo el botón de resumen.
 
 ## PWA
 
