@@ -9,11 +9,12 @@ Pensada para uso individual pero **reutilizable por otros estudiantes** vía cue
 separadas. El contexto completo y las reglas del proyecto están en
 [`CLAUDE.md`](./CLAUDE.md).
 
-> **Estado:** Fase 6 — auth + Bitácora, Tareas, Calendario, Evidencia, Panel de
-> progreso y **Entrevistas** (transcripción con Whisper 100% en el dispositivo +
-> resumen vía API de Claude sobre el texto ya anonimizado). Aplicá las
-> migraciones de `supabase/migrations/` (ver abajo) y, para el resumen, seteá
-> `ANTHROPIC_API_KEY`. Siguen: Búsqueda, pulido PWA.
+> **Estado:** Fase 7 — auth + Bitácora, Tareas, Calendario, Evidencia, Panel de
+> progreso, Entrevistas y **Búsqueda semántica** (pgvector + embeddings
+> calculados en el dispositivo). Aplicá las migraciones de
+> `supabase/migrations/` (ver abajo) y, para el resumen de entrevistas, seteá
+> `ANTHROPIC_API_KEY`. Sigue: Fase 8 (pulido PWA + licencia + README para otros
+> estudiantes).
 
 ## Principio no negociable: "código público, datos privados"
 
@@ -98,7 +99,7 @@ Supabase administra.
 
 ## Migraciones (Fase 3 en adelante)
 
-Las tablas viven en `supabase/migrations/` (`0001_init` … `0005_evidencia`).
+Las tablas viven en `supabase/migrations/` (`0001_init` … `0007_busqueda`).
 Cada tabla nace con `user_id` + RLS + las 4 policies en el mismo archivo
 (`.claude/skills/supabase-rls-schema`). `0005_evidencia` además crea el bucket
 privado de Storage `evidencia` y sus policies sobre `storage.objects` (mismo
@@ -140,6 +141,18 @@ npx supabase gen types typescript --project-id <TU_PROJECT_ID> > src/lib/databas
   texto transcripto que el usuario ya editó y anonimizó. Necesita
   `ANTHROPIC_API_KEY` en el entorno del servidor (Vercel → Environment
   Variables); sin ella, el módulo funciona salvo el botón de resumen.
+
+## Búsqueda semántica (Fase 7)
+
+- Extensión `pgvector` + tabla `documentos_indexados` (`0007_busqueda.sql`).
+- **Embeddings client-side**: `Supabase/gte-small` (384 dims, ~35 MB) vía
+  `@huggingface/transformers`, mismo criterio que Whisper (el modelo se descarga
+  al navegador; el texto que se embebe es el que el usuario ya generó).
+- Flujo: *Actualizar índice* junta resúmenes de entrevistas + notas de bitácora
+  y evidencia, los embebe en el navegador y reemplaza el índice del usuario. La
+  búsqueda embebe la consulta y llama a la función `match_documentos` (que
+  filtra por `auth.uid()` además de RLS).
+- `/busqueda` también sirve `COOP/COEP: credentialless` (solo esa ruta).
 
 ## PWA
 

@@ -199,9 +199,55 @@ export type Database = {
         };
         Relationships: [];
       };
+      documentos_indexados: {
+        Row: {
+          id: string;
+          user_id: string;
+          fuente: Database["public"]["Enums"]["documento_fuente"];
+          fuente_id: string;
+          titulo: string;
+          contenido: string;
+          embedding: string;
+        } & TimestampCols;
+        Insert: {
+          id?: string;
+          user_id: string;
+          fuente: Database["public"]["Enums"]["documento_fuente"];
+          fuente_id: string;
+          titulo: string;
+          contenido: string;
+          embedding: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          fuente?: Database["public"]["Enums"]["documento_fuente"];
+          fuente_id?: string;
+          titulo?: string;
+          contenido?: string;
+          embedding?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
-    Functions: Record<never, never>;
+    Functions: {
+      match_documentos: {
+        Args: { query_embedding: string; match_count?: number };
+        Returns: {
+          id: string;
+          fuente: Database["public"]["Enums"]["documento_fuente"];
+          fuente_id: string;
+          titulo: string;
+          contenido: string;
+          similitud: number;
+        }[];
+      };
+    };
     Enums: {
       tarea_estado: "pendiente" | "en_curso" | "completada";
       evento_tipo: "jornada" | "entrega" | "hito" | "otro";
@@ -211,6 +257,7 @@ export type Database = {
         | "nota"
         | "organigrama"
         | "otro";
+      documento_fuente: "entrevista" | "jornada" | "evidencia";
     };
     CompositeTypes: Record<never, never>;
   };

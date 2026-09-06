@@ -8,18 +8,18 @@ const nextConfig: NextConfig = {
   agentRules: false,
 
   async headers() {
+    // Aislamiento cross-origin SOLO en las rutas que corren modelos en el
+    // navegador (Whisper en /entrevistas, embeddings en /busqueda): habilita los
+    // threads WASM. `credentialless` no exige CORP en las respuestas del CDN de
+    // modelos. Se limita a estas rutas para no romper las URLs firmadas de
+    // Evidencia ni el resto de la app.
+    const coi = [
+      { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+      { key: "Cross-Origin-Embedder-Policy", value: "credentialless" },
+    ];
     return [
-      {
-        // Aislamiento cross-origin SOLO en /entrevistas: habilita los threads
-        // WASM de Whisper (transcripción más rápida cuando no hay WebGPU).
-        // `credentialless` no exige CORP en las respuestas del CDN de modelos.
-        // Se limita a esta ruta para no romper las URLs firmadas de Evidencia.
-        source: "/entrevistas/:path*",
-        headers: [
-          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-          { key: "Cross-Origin-Embedder-Policy", value: "credentialless" },
-        ],
-      },
+      { source: "/entrevistas/:path*", headers: coi },
+      { source: "/busqueda/:path*", headers: coi },
     ];
   },
 };
