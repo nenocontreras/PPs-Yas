@@ -9,10 +9,11 @@ Pensada para uso individual pero **reutilizable por otros estudiantes** vía cue
 separadas. El contexto completo y las reglas del proyecto están en
 [`CLAUDE.md`](./CLAUDE.md).
 
-> **Estado:** Fase 4 — auth + **Bitácora**, **Tareas**, **Calendario** y
-> **Banco de evidencia** (Supabase Storage, bucket privado). Aplicá las
-> migraciones de `supabase/migrations/` (ver abajo). Siguen: Panel de progreso,
-> Entrevistas, Búsqueda.
+> **Estado:** Fase 5 — auth + **Bitácora**, **Tareas**, **Calendario**,
+> **Banco de evidencia** y **Panel de progreso** (pantalla de inicio: horas
+> acumuladas, tareas por estado, próximos eventos, entrevistas en 0). Aplicá
+> las migraciones de `supabase/migrations/` (ver abajo). Siguen: Entrevistas,
+> Búsqueda, pulido PWA.
 
 ## Principio no negociable: "código público, datos privados"
 
