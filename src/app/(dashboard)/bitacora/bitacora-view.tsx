@@ -155,13 +155,18 @@ function JornadaForm({
   const fe = state.fieldErrors ?? {};
 
   return (
-    <form action={formAction} noValidate className="flex flex-col gap-3">
+    <form
+      action={formAction}
+      noValidate
+      aria-label={jornada ? "Editar jornada" : "Nueva jornada"}
+      className="flex flex-col gap-3"
+    >
       {state.error && (
         <p className="text-xs text-danger" role="alert">
           {state.error}
         </p>
       )}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <TextField
           label="Fecha"
           name="fecha"
@@ -180,7 +185,7 @@ function JornadaForm({
           min="0.5"
           max="24"
           required
-          placeholder="Ej: 4"
+          hint="Ej: 4 o 4.5"
           defaultValue={jornada ? String(jornada.horas) : ""}
           error={fe.horas}
         />

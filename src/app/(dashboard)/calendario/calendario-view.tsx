@@ -80,7 +80,7 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
     <div className="mx-auto max-w-2xl">
       <h1 className="text-xl font-semibold tracking-tight">Calendario</h1>
 
-      <div className="mt-4 rounded-xl border border-line bg-surface p-3 sm:p-4">
+      <div className="mt-4 rounded-xl border border-line bg-surface p-2 sm:p-4">
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
@@ -109,9 +109,14 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
           ))}
         </div>
 
-        <div className="mt-1 grid grid-cols-7 gap-1">
+        <div
+          className="mt-1 grid grid-cols-7 gap-1"
+          aria-label={`Días de ${formatMes(cursor.year, cursor.month0)}`}
+          role="group"
+        >
           {grid.map((cell) => {
             const tipos = tiposDelDia(cell.iso);
+            const nEventos = (byDate.get(cell.iso) ?? []).length;
             const isToday = cell.iso === today;
             const isSel = cell.iso === selected;
             // Tinte de la celda: color del (único) tipo del día, o del que se
@@ -123,6 +128,14 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
                   ? tipos[0]
                   : null;
 
+            const label =
+              formatFecha(cell.iso) +
+              (nEventos > 0
+                ? `, ${nEventos} ${nEventos === 1 ? "evento" : "eventos"}: ${tipos
+                    .map((t) => TIPO_LABEL[t])
+                    .join(", ")}`
+                : ", sin eventos");
+
             return (
               <button
                 key={cell.iso}
@@ -133,13 +146,14 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
                 }}
                 aria-pressed={isSel}
                 aria-current={isToday ? "date" : undefined}
+                aria-label={label}
                 style={
                   !isSel && tintTipo
                     ? { backgroundColor: `${TIPO_COLOR[tintTipo]}1f` }
                     : undefined
                 }
                 className={cn(
-                  "flex aspect-square flex-col items-center justify-center gap-1 rounded-lg text-sm transition-colors",
+                  "flex aspect-square min-h-11 flex-col items-center justify-center gap-1 rounded-lg text-sm transition-colors",
                   !cell.inMonth && "text-line-strong",
                   cell.inMonth && !isSel && "text-ink hover:bg-surface-2",
                   isSel && "bg-primary font-semibold text-primary-fg",
@@ -148,16 +162,18 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
                     "font-semibold ring-1 ring-inset ring-primary",
                 )}
               >
-                {cell.day}
-                <span className="flex h-1 items-center gap-0.5">
+                <span aria-hidden>{cell.day}</span>
+                <span className="flex h-1.5 items-center gap-0.5" aria-hidden>
                   {tipos.slice(0, 3).map((t) => (
                     <span
                       key={t}
                       className={cn(
-                        "h-1 w-1 rounded-full",
+                        "h-1.5 w-1.5 rounded-full",
                         isSel && "bg-primary-fg",
                       )}
-                      style={isSel ? undefined : { backgroundColor: TIPO_COLOR[t] }}
+                      style={
+                        isSel ? undefined : { backgroundColor: TIPO_COLOR[t] }
+                      }
                     />
                   ))}
                 </span>
@@ -170,7 +186,7 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
       </div>
 
       <div className="mt-5 flex items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold capitalize">
+        <h2 className="text-sm font-semibold capitalize" aria-live="polite">
           {formatFecha(selected)}
         </h2>
         {!adding && (
@@ -199,7 +215,7 @@ export function CalendarioView({ eventos }: { eventos: Evento[] }) {
         </div>
       )}
 
-      <div className="mt-3 space-y-2">
+      <div className="mt-3 space-y-2" aria-live="polite">
         {selectedEventos.length === 0 && !adding && (
           <p className="rounded-xl border border-dashed border-line-strong bg-surface p-4 text-center text-xs text-muted">
             No hay eventos este día.
@@ -322,7 +338,12 @@ function EventoForm({
   const fe = state.fieldErrors ?? {};
 
   return (
-    <form action={formAction} noValidate className="flex flex-col gap-3">
+    <form
+      action={formAction}
+      noValidate
+      aria-label={evento ? "Editar evento" : "Nuevo evento"}
+      className="flex flex-col gap-3"
+    >
       {state.error && (
         <p className="text-xs text-danger" role="alert">
           {state.error}
@@ -335,7 +356,7 @@ function EventoForm({
         defaultValue={evento?.titulo ?? ""}
         error={fe.titulo}
       />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <TextField
           label="Fecha"
           name="fecha"

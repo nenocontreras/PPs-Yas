@@ -15,7 +15,8 @@ const VARIANT: Record<Variant, string> = {
 };
 
 const SIZE: Record<Size, string> = {
-  sm: "min-h-9 px-3 text-[13px]",
+  // sm es compacto pero mantiene 44px de alto tocable (mobile-first).
+  sm: "min-h-11 px-3 text-[13px]",
   md: "min-h-11 px-[1.1rem] text-sm",
   lg: "min-h-12 px-6 text-[15px]",
 };

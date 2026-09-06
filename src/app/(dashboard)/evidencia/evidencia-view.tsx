@@ -195,10 +195,10 @@ function Chip({
       aria-pressed={active}
       className={cn(
         "rounded-full border font-medium transition-colors",
-        small ? "min-h-7 px-2.5 text-[11px]" : "min-h-9 px-3 text-xs",
+        small ? "min-h-9 px-3 text-[11px]" : "min-h-11 px-3.5 text-xs",
         active
           ? "border-primary bg-primary text-primary-fg"
-          : "border-line text-muted hover:bg-surface-2",
+          : "border-line text-muted hover:bg-surface-2 hover:text-ink",
       )}
     >
       {children}
@@ -252,7 +252,8 @@ function EvidenciaCard({
                 key={t}
                 type="button"
                 onClick={() => onTag(t)}
-                className="rounded-md bg-surface-2 px-1.5 py-0.5 text-[11px] text-muted hover:text-ink"
+                aria-label={`Filtrar por etiqueta ${t}`}
+                className="inline-flex min-h-9 items-center rounded-md bg-surface-2 px-2 text-[11px] text-muted hover:text-ink"
               >
                 #{t}
               </button>
@@ -368,7 +369,12 @@ function UploadForm({
   const fe = state.fieldErrors ?? {};
 
   return (
-    <form action={formAction} noValidate className="flex flex-col gap-3">
+    <form
+      action={formAction}
+      noValidate
+      aria-label="Subir evidencia"
+      className="flex flex-col gap-3"
+    >
       {state.error && (
         <p className="text-xs text-danger" role="alert">
           {state.error}
@@ -385,10 +391,19 @@ function UploadForm({
           type="file"
           required
           accept={ACCEPT_ATTR}
-          className="text-sm file:mr-3 file:min-h-9 file:rounded-lg file:border-0 file:bg-primary file:px-3 file:text-sm file:font-semibold file:text-primary-fg"
+          aria-invalid={fe.file ? true : undefined}
+          aria-describedby={fe.file ? "ev-file-error" : "ev-file-hint"}
+          className="text-sm file:mr-3 file:min-h-11 file:rounded-lg file:border-0 file:bg-primary file:px-3 file:text-sm file:font-semibold file:text-primary-fg"
         />
-        {fe.file && <p className="text-xs text-danger">{fe.file}</p>}
-        <p className="text-xs text-muted">Hasta 10 MB.</p>
+        {fe.file ? (
+          <p id="ev-file-error" className="text-xs text-danger">
+            {fe.file}
+          </p>
+        ) : (
+          <p id="ev-file-hint" className="text-xs text-muted">
+            Imágenes, PDF u Office. Hasta 10 MB.
+          </p>
+        )}
       </div>
 
       <MetaFields defaults={{ fecha_captura: todayISO() }} fieldErrors={fe} />
@@ -423,7 +438,12 @@ function MetaForm({
   const [state, formAction] = useActionState(wrapped, OK);
 
   return (
-    <form action={formAction} noValidate className="flex flex-col gap-3">
+    <form
+      action={formAction}
+      noValidate
+      aria-label="Editar evidencia"
+      className="flex flex-col gap-3"
+    >
       {state.error && (
         <p className="text-xs text-danger" role="alert">
           {state.error}
@@ -471,7 +491,7 @@ function MetaFields({
         defaultValue={defaults.titulo ?? ""}
         error={fieldErrors.titulo}
       />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Select label="Tipo" name="tipo" defaultValue={defaults.tipo ?? "otro"}>
           {TIPOS.map((t) => (
             <option key={t} value={t}>
@@ -492,7 +512,7 @@ function MetaFields({
         label="Etiquetas"
         name="etiquetas"
         optional
-        placeholder="Separadas por comas: rrhh, organigrama"
+        hint="Separadas por comas. Ej: rrhh, organigrama"
         defaultValue={defaults.etiquetas ?? ""}
       />
       <Textarea

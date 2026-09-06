@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { MoreIcon } from "@/components/icons";
 import { LogoutButton } from "@/components/logout-button";
@@ -11,6 +11,7 @@ import { cn } from "@/lib/cn";
 
 /** Módulos en la barra inferior de mobile; el resto va al menú "Más". */
 const MOBILE_PRIMARY = ["/", "/bitacora", "/tareas", "/evidencia"];
+const SHEET_ID = "nav-more-sheet";
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -21,6 +22,46 @@ export function DashboardNav({ userEmail }: { userEmail?: string }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
+  const moreBtnRef = useRef<HTMLButtonElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  // Diálogo modal: foco al abrir, restaurar al cerrar, Escape cierra, trampa de
+  // foco básica, y bloqueo del scroll de fondo.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const sheet = sheetRef.current;
+    const moreBtn = moreBtnRef.current;
+    sheet?.focus();
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        return;
+      }
+      if (e.key !== "Tab" || !sheet) return;
+      const items = sheet.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled])',
+      );
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+      moreBtn?.focus();
+    };
+  }, [menuOpen]);
 
   const primary = MODULES.filter((m) => MOBILE_PRIMARY.includes(m.href));
   const overflow = MODULES.filter((m) => !MOBILE_PRIMARY.includes(m.href));
@@ -29,7 +70,10 @@ export function DashboardNav({ userEmail }: { userEmail?: string }) {
   return (
     <>
       {/* Lateral — solo desktop */}
-      <aside className="hidden lg:flex lg:w-60 lg:shrink-0 lg:flex-col lg:border-r lg:border-line lg:bg-surface">
+      <aside
+        aria-label="Navegación"
+        className="hidden lg:flex lg:w-60 lg:shrink-0 lg:flex-col lg:border-r lg:border-line lg:bg-surface"
+      >
         <div className="flex h-16 items-center gap-2 px-5">
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-sm font-bold text-primary-fg">
             PPS
@@ -68,16 +112,25 @@ export function DashboardNav({ userEmail }: { userEmail?: string }) {
         </div>
       </aside>
 
-      {/* Menú "Más" — mobile, se abre desde la barra inferior */}
+      {/* Menú "Más" — bottom sheet modal en mobile */}
       {menuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <button
             type="button"
             aria-label="Cerrar menú"
+            tabIndex={-1}
             onClick={() => setMenuOpen(false)}
             className="absolute inset-0 bg-slate-900/35"
           />
-          <div className="absolute inset-x-0 bottom-0 rounded-t-2xl border-t border-line bg-surface p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_-4px_16px_-4px_rgb(15_23_42/0.15)]">
+          <div
+            ref={sheetRef}
+            id={SHEET_ID}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Más opciones"
+            tabIndex={-1}
+            className="absolute inset-x-0 bottom-0 rounded-t-2xl border-t border-line bg-surface p-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_-4px_16px_-4px_rgb(15_23_42/0.15)] focus:outline-none"
+          >
             <div className="mx-auto mb-3 h-1 w-9 rounded-full bg-line" />
             {overflow.map((m) => {
               const active = isActive(pathname, m.href);
@@ -131,10 +184,12 @@ export function DashboardNav({ userEmail }: { userEmail?: string }) {
           })}
           <li className="flex-1">
             <button
+              ref={moreBtnRef}
               type="button"
               onClick={() => setMenuOpen((v) => !v)}
               aria-expanded={menuOpen}
-              aria-haspopup="menu"
+              aria-haspopup="dialog"
+              aria-controls={menuOpen ? SHEET_ID : undefined}
               className={cn(
                 "flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-lg px-1 py-1.5 text-[11px] font-medium leading-none transition-colors",
                 menuOpen || moreActive ? "text-ink" : "text-muted",

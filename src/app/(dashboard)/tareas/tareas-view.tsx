@@ -149,10 +149,10 @@ function FiltroChip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "min-h-9 rounded-full border px-3 text-xs font-medium transition-colors",
+        "min-h-11 rounded-full border px-3.5 text-xs font-medium transition-colors",
         active
           ? "border-primary bg-primary text-primary-fg"
-          : "border-line text-muted hover:bg-surface-2",
+          : "border-line text-muted hover:bg-surface-2 hover:text-ink",
       )}
     >
       {children}
@@ -190,7 +190,7 @@ function TareaCard({ tarea, onEdit }: { tarea: Tarea; onEdit: () => void }) {
               startTransition(() => setTareaEstado(tarea.id, e))
             }
           >
-            → {estadoLabel(e)}
+            Marcar {estadoLabel(e).toLowerCase()}
           </Button>
         ))}
         <span className="mx-1 h-4 w-px bg-line" />
@@ -235,7 +235,12 @@ function TareaForm({
   const fe = state.fieldErrors ?? {};
 
   return (
-    <form action={formAction} noValidate className="flex flex-col gap-3">
+    <form
+      action={formAction}
+      noValidate
+      aria-label={tarea ? "Editar tarea" : "Nueva tarea"}
+      className="flex flex-col gap-3"
+    >
       {state.error && (
         <p className="text-xs text-danger" role="alert">
           {state.error}
@@ -255,7 +260,7 @@ function TareaForm({
         rows={2}
         defaultValue={tarea?.descripcion ?? ""}
       />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Select
           label="Estado"
           name="estado"
@@ -271,7 +276,7 @@ function TareaForm({
           label="Bloque"
           name="bloque"
           optional
-          placeholder="Ej: Bloque 3"
+          hint="Ej: Bloque 3"
           defaultValue={tarea?.bloque ?? ""}
         />
       </div>

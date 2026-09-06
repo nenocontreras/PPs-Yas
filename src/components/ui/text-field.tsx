@@ -64,13 +64,15 @@ export function TextField({
           aria-describedby={describedBy}
           className={cn(
             "w-full min-h-11 rounded-[0.625rem] border bg-surface px-3 text-ink",
-            "transition-colors placeholder:text-line-strong",
+            "transition-colors placeholder:text-muted",
             "hover:border-muted focus:outline-none focus-visible:outline-none",
-            "focus:border-focus focus:ring-3 focus:ring-focus/25",
+            "focus:border-focus focus:ring-3 focus:ring-focus/50",
             "disabled:cursor-not-allowed disabled:bg-surface-2 disabled:text-muted",
             Boolean(icon) && "pl-[38px]",
             isPassword && "pr-16",
-            error ? "border-danger focus:border-danger focus:ring-danger/25" : "border-line-strong",
+            error
+              ? "border-danger focus:border-danger focus:ring-danger/50"
+              : "border-line-strong",
             className,
           )}
           {...props}
@@ -80,7 +82,8 @@ export function TextField({
             type="button"
             onClick={() => setReveal((v) => !v)}
             aria-pressed={reveal}
-            className="absolute right-1.5 grid min-h-9 min-w-9 place-items-center rounded-md px-2 text-xs text-muted hover:text-ink"
+            aria-label={reveal ? "Ocultar contraseña" : "Mostrar contraseña"}
+            className="absolute right-1 grid min-h-11 min-w-11 place-items-center rounded-md px-2 text-xs text-muted hover:text-ink"
           >
             {reveal ? "Ocultar" : "Ver"}
           </button>

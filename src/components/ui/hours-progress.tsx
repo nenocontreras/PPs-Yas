@@ -40,6 +40,7 @@ export function HoursProgress({
         aria-valuenow={Math.round(horas)}
         aria-valuemin={0}
         aria-valuemax={HORAS_MAXIMO}
+        aria-valuetext={`${formatHoras(horas)} de ${HORAS_MINIMO} horas mínimas`}
         aria-label="Horas acumuladas"
       >
         <div
@@ -49,9 +50,9 @@ export function HoursProgress({
           )}
           style={{ width: `${pct}%` }}
         />
-        {/* marca del mínimo reglamentario */}
+        {/* marca del mínimo reglamentario (130 hs) */}
         <span
-          className="absolute inset-y-0 w-px bg-surface/70"
+          className="absolute inset-y-0 w-0.5 bg-warning"
           style={{ left: `${minPct}%` }}
           aria-hidden
         />
