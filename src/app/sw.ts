@@ -1,6 +1,14 @@
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { ExpirationPlugin, NetworkFirst, NetworkOnly, Serwist } from "serwist";
+import {
+  CacheableResponsePlugin,
+  CacheFirst,
+  ExpirationPlugin,
+  NetworkFirst,
+  NetworkOnly,
+  RangeRequestsPlugin,
+  Serwist,
+} from "serwist";
 
 // El manifest de precache lo inyecta @serwist/next en build.
 declare global {
@@ -28,23 +36,55 @@ const serwist = new Serwist({
   runtimeCaching: [
     // --- Supabase: datos privados, NUNCA cache-first --------------------------
     {
-      // Sesión / tokens: siempre a la red, jamás al cache.
+      // Sesión / tokens y CONTENIDO DE ARCHIVOS (Storage / Evidencia): siempre a
+      // la red, jamás al cache. Dejar documentos o fotos de la empresa en el
+      // CacheStorage del dispositivo contradice "datos privados" (el cache no se
+      // limpia al expirar la sesión ni al cerrar la pestaña).
       matcher: ({ url }) =>
         url.hostname.endsWith(".supabase.co") &&
-        url.pathname.startsWith("/auth/v1/"),
+        (url.pathname.startsWith("/auth/v1/") ||
+          url.pathname.startsWith("/storage/v1/")),
       handler: new NetworkOnly(),
     },
     {
-      // REST y Storage: network-first con TTL corto para que "offline" no
-      // sirva datos viejos de otra sesión indefinidamente. Al hacer signOut
-      // (Fase 2) conviene limpiar el cache "supabase".
-      matcher: ({ url }) => url.hostname.endsWith(".supabase.co"),
+      // Sólo REST (metadatos: jornadas, tareas, transcripciones ya anonimizadas):
+      // network-first con TTL corto para que "offline" no sirva datos viejos de
+      // otra sesión indefinidamente. Se limpia además en signOut (Fase 2).
+      matcher: ({ url }) =>
+        url.hostname.endsWith(".supabase.co") &&
+        url.pathname.startsWith("/rest/v1/"),
       method: "GET",
       handler: new NetworkFirst({
         cacheName: "supabase",
         networkTimeoutSeconds: 10,
         plugins: [
           new ExpirationPlugin({ maxEntries: 60, maxAgeSeconds: 60 * 30 }),
+        ],
+      }),
+    },
+    // --- Modelos ML (Whisper / gte-small) + runtime de ONNX -----------------
+    {
+      // Los shards del modelo (cientos de MB) vienen del CDN de Hugging Face y
+      // el `ort-*.wasm` de jsDelivr. Sin regla propia caen en el catch-all de
+      // defaultCache (32 entradas / 1 h): el modelo se re-descarga seguido y la
+      // transcripción no anda offline. CacheFirst + expiración generosa.
+      // No hay datos del usuario acá: es cliente ↔ CDN de modelos.
+      matcher: ({ url }) =>
+        url.hostname === "huggingface.co" ||
+        url.hostname.endsWith(".huggingface.co") ||
+        url.hostname.endsWith(".hf.co") ||
+        (url.hostname === "cdn.jsdelivr.net" &&
+          url.pathname.includes("@huggingface/transformers")),
+      handler: new CacheFirst({
+        cacheName: "ml-models",
+        plugins: [
+          new CacheableResponsePlugin({ statuses: [0, 200] }),
+          new RangeRequestsPlugin(),
+          new ExpirationPlugin({
+            maxEntries: 64,
+            maxAgeSeconds: 60 * 60 * 24 * 90,
+            purgeOnQuotaError: true,
+          }),
         ],
       }),
     },
@@ -65,14 +105,3 @@ const serwist = new Serwist({
 });
 
 serwist.addEventListeners();
-
-// TODO (Fase 6 — módulo de entrevistas):
-//  - El modelo Whisper (cientos de MB en shards) necesita su propia regla de
-//    runtime caching: CacheFirst + RangeRequestsPlugin + ExpirationPlugin
-//    generoso + cacheName propio, ANTES de ...defaultCache (el catch-all
-//    cross-origin de defaultCache es 32 entradas / 1 h, inservible para esto).
-//  - Si se usan threads WASM hará falta COOP/COEP. COEP `require-corp` global
-//    rompe los fetch cross-origin del SW (Supabase, CDN del modelo) salvo CORP;
-//    usar `credentialless`, limitar los headers a la ruta /entrevistas, o
-//    self-hostear el modelo bajo /public. transformers.js puede correr
-//    single-thread sin aislamiento como fallback.

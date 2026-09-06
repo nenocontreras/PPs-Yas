@@ -142,6 +142,10 @@ nace con `user_id` + RLS + 4 policies en el mismo commit.
 `COEP: credentialless` (solo esas rutas) para habilitar los threads WASM de los
 modelos. No afecta al resto de la app (p. ej. las URLs firmadas de Evidencia).
 
+Safari (iOS) todavía no soporta `COEP: credentialless`, así que en iPhone el
+aislamiento no se activa y la transcripción corre single-thread (más lenta, pero
+funciona: el worker cae al backend WASM sin threads).
+
 ### Regenerar los tipos tras una migración
 
 ```bash
