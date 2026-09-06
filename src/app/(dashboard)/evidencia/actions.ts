@@ -32,8 +32,14 @@ export async function createEvidencia(
 ): Promise<FormState> {
   const { supabase, user } = await requireUser();
 
-  // El path SIEMPRE tiene que empezar con la carpeta del usuario.
-  if (!input.storage_path.startsWith(`${user.id}/`)) {
+  // El primer segmento del path SIEMPRE tiene que ser la carpeta del usuario
+  // (además la policy de storage.objects lo obliga; esto es defensa en capas).
+  const [firstSegment, ...rest] = input.storage_path.split("/");
+  if (
+    firstSegment !== user.id ||
+    rest.length === 0 ||
+    input.storage_path.includes("..")
+  ) {
     return { error: "Ruta de archivo inválida." };
   }
 
@@ -97,7 +103,7 @@ export async function updateEvidencia(
   return { ok: true };
 }
 
-export async function deleteEvidencia(id: string): Promise<void> {
+export async function deleteEvidencia(id: string): Promise<FormState> {
   const { supabase, user } = await requireUser();
 
   const { data: row } = await supabase
@@ -107,10 +113,24 @@ export async function deleteEvidencia(id: string): Promise<void> {
     .eq("user_id", user.id)
     .maybeSingle();
 
+  // Borrar primero el archivo. Si falla, no borramos la fila: así el usuario
+  // puede reintentar en vez de quedar con un archivo huérfano en Storage.
   if (row?.storage_path) {
-    await supabase.storage.from(BUCKET).remove([row.storage_path]);
+    const { error: rmErr } = await supabase.storage
+      .from(BUCKET)
+      .remove([row.storage_path]);
+    if (rmErr) {
+      return { error: "No se pudo borrar el archivo. Reintentá." };
+    }
   }
-  await supabase.from("evidencia").delete().eq("id", id).eq("user_id", user.id);
+
+  const { error } = await supabase
+    .from("evidencia")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+  if (error) return { error: "No se pudo borrar la evidencia." };
 
   revalidatePath(ROUTE);
+  return { ok: true };
 }

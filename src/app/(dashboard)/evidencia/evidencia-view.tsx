@@ -10,6 +10,7 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { TextField } from "@/components/ui/text-field";
 import { cn } from "@/lib/cn";
 import {
+  ACCEPT_ATTR,
   BUCKET,
   type Evidencia,
   MAX_BYTES,
@@ -18,6 +19,7 @@ import {
   formatBytes,
   parseEtiquetas,
   previewKind,
+  tipoBloqueado,
 } from "@/lib/evidencia";
 import { formatFecha, todayISO } from "@/lib/dates";
 import { type FormState, OK } from "@/lib/form";
@@ -25,7 +27,17 @@ import { createClient } from "@/lib/supabase/client";
 
 import { createEvidencia, deleteEvidencia, updateEvidencia } from "./actions";
 
-type Item = Evidencia & { signedUrl: string | null };
+type Item = Pick<
+  Evidencia,
+  | "id"
+  | "titulo"
+  | "tipo"
+  | "etiquetas"
+  | "fecha_captura"
+  | "notas"
+  | "mime_type"
+  | "size_bytes"
+> & { signedUrl: string | null };
 
 function extOf(name: string): string {
   const m = /\.([a-z0-9]+)$/i.exec(name);
@@ -204,6 +216,7 @@ function EvidenciaCard({
   onTag: (t: string) => void;
 }) {
   const [pending, startTransition] = useTransition();
+  const [delError, setDelError] = useState<string | null>(null);
   const kind = previewKind(item.mime_type);
 
   return (
@@ -280,14 +293,22 @@ function EvidenciaCard({
             loading={pending}
             className="text-danger hover:bg-danger-bg"
             onClick={() => {
-              if (window.confirm("¿Borrar esta evidencia y su archivo?")) {
-                startTransition(() => deleteEvidencia(item.id));
-              }
+              if (!window.confirm("¿Borrar esta evidencia y su archivo?")) return;
+              setDelError(null);
+              startTransition(async () => {
+                const res = await deleteEvidencia(item.id);
+                if (res.error) setDelError(res.error);
+              });
             }}
           >
             Borrar
           </Button>
         </div>
+        {delError && (
+          <p className="mt-2 text-xs text-danger" role="alert">
+            {delError}
+          </p>
+        )}
       </div>
     </article>
   );
@@ -314,6 +335,9 @@ function UploadForm({
     if (file.size > MAX_BYTES) {
       return { fieldErrors: { file: "El archivo supera los 10 MB." } };
     }
+    if (tipoBloqueado(file.type)) {
+      return { fieldErrors: { file: "Ese tipo de archivo no está permitido." } };
+    }
 
     const supabase = createClient();
     const path = `${userId}/${crypto.randomUUID()}${extOf(file.name)}`;
@@ -321,7 +345,9 @@ function UploadForm({
       .from(BUCKET)
       .upload(path, file, { contentType: file.type || undefined });
     if (upErr) {
-      return { error: "No se pudo subir el archivo. Reintentá." };
+      return /mime|type/i.test(upErr.message)
+        ? { fieldErrors: { file: "Ese tipo de archivo no está permitido." } }
+        : { error: "No se pudo subir el archivo. Reintentá." };
     }
 
     const result = await createEvidencia({
@@ -358,7 +384,7 @@ function UploadForm({
           name="file"
           type="file"
           required
-          accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.txt,.csv,.ppt,.pptx"
+          accept={ACCEPT_ATTR}
           className="text-sm file:mr-3 file:min-h-9 file:rounded-lg file:border-0 file:bg-primary file:px-3 file:text-sm file:font-semibold file:text-primary-fg"
         />
         {fe.file && <p className="text-xs text-danger">{fe.file}</p>}
@@ -384,7 +410,7 @@ function MetaForm({
   onDone,
   onCancel,
 }: {
-  item: Evidencia;
+  item: Item;
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
   onDone: () => void;
   onCancel: () => void;

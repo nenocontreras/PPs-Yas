@@ -49,10 +49,29 @@ create trigger evidencia_set_updated_at
 
 -- ---------------------------------------------------------------------------
 -- Storage: bucket PRIVADO. Si este insert falla por permisos, creá el bucket
--- desde el panel (Storage → New bucket → nombre "evidencia", Private).
-insert into storage.buckets (id, name, public, file_size_limit)
-values ('evidencia', 'evidencia', false, 10485760) -- 10 MB
-on conflict (id) do nothing;
+-- desde el panel (Storage → New bucket → nombre "evidencia", Private) ANTES de
+-- correr la migración. `allowed_mime_types` bloquea SVG/HTML (XSS almacenado) y
+-- cualquier cosa fuera de imágenes / PDF / Office; el `accept` del <input> no
+-- alcanza porque es bypasseable.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'evidencia', 'evidencia', false, 10485760, -- 10 MB
+  array[
+    'image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/heic', 'image/heif',
+    'application/pdf',
+    'text/plain', 'text/csv',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+  ]
+)
+on conflict (id) do update
+  set public = excluded.public,
+      file_size_limit = excluded.file_size_limit,
+      allowed_mime_types = excluded.allowed_mime_types;
 
 -- Policies sobre storage.objects: el primer segmento de la ruta es el user_id.
 create policy "evidencia_objects_select_own" on storage.objects

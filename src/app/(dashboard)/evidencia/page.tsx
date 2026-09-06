@@ -17,10 +17,19 @@ export default async function EvidenciaPage() {
     items.map((e) => e.storage_path),
   );
 
-  const withUrls = items.map((e) => ({
-    ...e,
+  // Solo los campos que usa la vista: no mandamos user_id ni storage_path al
+  // bundle del cliente.
+  const items_ = items.map((e) => ({
+    id: e.id,
+    titulo: e.titulo,
+    tipo: e.tipo,
+    etiquetas: e.etiquetas,
+    fecha_captura: e.fecha_captura,
+    notas: e.notas,
+    mime_type: e.mime_type,
+    size_bytes: e.size_bytes,
     signedUrl: urls.get(e.storage_path) ?? null,
   }));
 
-  return <EvidenciaView items={withUrls} userId={user.id} />;
+  return <EvidenciaView items={items_} userId={user.id} />;
 }
