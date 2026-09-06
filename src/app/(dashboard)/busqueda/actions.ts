@@ -77,19 +77,15 @@ export async function getContenidoIndexable(): Promise<DocIndexable[]> {
   return docs;
 }
 
-/** Reemplaza el índice del usuario con los documentos + embeddings recibidos. */
+/**
+ * Actualiza el índice del usuario: upsert de los documentos actuales y borrado
+ * de los que ya no están. Se hace en ese orden (no delete-all primero) para que
+ * el índice no quede vacío si algo falla a mitad.
+ */
 export async function reindexar(
   docs: (DocIndexable & { embedding: number[] })[],
 ): Promise<{ ok?: boolean; count?: number; error?: string }> {
   const { supabase, user } = await requireUser();
-
-  const { error: delError } = await supabase
-    .from("documentos_indexados")
-    .delete()
-    .eq("user_id", user.id);
-  if (delError) return { error: "No se pudo actualizar el índice." };
-
-  if (docs.length === 0) return { ok: true, count: 0 };
 
   const rows = docs
     .filter((d) => Array.isArray(d.embedding) && d.embedding.length === 384)
@@ -102,8 +98,30 @@ export async function reindexar(
       embedding: JSON.stringify(d.embedding),
     }));
 
-  const { error } = await supabase.from("documentos_indexados").insert(rows);
-  if (error) return { error: "No se pudieron guardar los embeddings." };
+  if (rows.length === 0) {
+    const { error } = await supabase
+      .from("documentos_indexados")
+      .delete()
+      .eq("user_id", user.id);
+    return error
+      ? { error: "No se pudo actualizar el índice." }
+      : { ok: true, count: 0 };
+  }
+
+  const { data: kept, error: upErr } = await supabase
+    .from("documentos_indexados")
+    .upsert(rows, { onConflict: "user_id,fuente,fuente_id" })
+    .select("id");
+  if (upErr || !kept) {
+    return { error: "No se pudieron guardar los embeddings." };
+  }
+
+  const keptIds = kept.map((r) => `"${r.id}"`).join(",");
+  await supabase
+    .from("documentos_indexados")
+    .delete()
+    .eq("user_id", user.id)
+    .not("id", "in", `(${keptIds})`);
 
   return { ok: true, count: rows.length };
 }

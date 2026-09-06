@@ -5,6 +5,11 @@
 -- indexa es el que el usuario ya generó/anonimizó (resumen de entrevista, notas
 -- de bitácora, notas de evidencia). Volumen bajo: se prioriza simple y correcto.
 
+-- Antes de aplicar, si `vector` ya estuviera instalada en otro schema:
+--   select extnamespace::regnamespace from pg_extension where extname = 'vector';
+-- debería devolver `extensions`. Si dice `public`, mové las referencias de esta
+-- migración a `vector(384)` sin el prefijo `extensions.`.
+
 begin;
 
 create extension if not exists vector with schema extensions;
@@ -78,5 +83,11 @@ as $$
   order by d.embedding <=> query_embedding
   limit greatest(1, least(match_count, 50));
 $$;
+
+-- Solo usuarios autenticados pueden ejecutar la búsqueda.
+revoke execute on function public.match_documentos(extensions.vector, integer)
+  from public, anon;
+grant execute on function public.match_documentos(extensions.vector, integer)
+  to authenticated;
 
 commit;
