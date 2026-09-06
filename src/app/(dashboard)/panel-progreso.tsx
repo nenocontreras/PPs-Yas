@@ -9,8 +9,15 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { HoursProgress } from "@/components/ui/hours-progress";
 import { TIPO_COLOR, TIPO_LABEL } from "@/lib/calendario";
-import { formatFecha } from "@/lib/dates";
+import { formatFecha, formatMes, parseISODate } from "@/lib/dates";
 import type { PanelData } from "@/lib/panel";
+import { HORAS_MINIMO, formatHoras } from "@/lib/pps";
+
+/** "YYYY-MM-DD" → "septiembre de 2026". */
+function formatMesDe(iso: string): string {
+  const d = parseISODate(iso);
+  return formatMes(d.getFullYear(), d.getMonth());
+}
 
 const TAREA_TILES = [
   { key: "pendiente", label: "Pendientes", cls: "" },
@@ -64,6 +71,36 @@ export function PanelProgreso({
       )}
 
       <HoursProgress horas={data.totalHoras} />
+
+      {/* Ritmo y proyección */}
+      {data.ritmo && (
+        <section className="rounded-xl border border-line bg-surface p-4">
+          <h2 className="text-sm font-semibold">Ritmo de trabajo</h2>
+          <p className="mt-1 flex items-baseline gap-1.5">
+            <span className="font-mono text-xl font-semibold tabular-nums">
+              {formatHoras(data.ritmo.horasSemana)} hs
+            </span>
+            <span className="text-[13px] text-muted">por semana</span>
+          </p>
+          <p className="mt-1.5 text-xs text-muted">
+            {data.ritmo.fechaEstimadaMinimo ? (
+              <>
+                A este ritmo alcanzás el mínimo de {HORAS_MINIMO} hs cerca de{" "}
+                <span className="font-medium capitalize text-ink">
+                  {formatMesDe(data.ritmo.fechaEstimadaMinimo)}
+                </span>
+                .
+              </>
+            ) : (
+              <>
+                Ya cumpliste el mínimo de {HORAS_MINIMO} hs; seguí sumando hasta
+                el máximo.
+              </>
+            )}{" "}
+            Contás desde el {formatFecha(data.ritmo.desde)}.
+          </p>
+        </section>
+      )}
 
       {/* Tareas por estado */}
       <section>
