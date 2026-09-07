@@ -21,6 +21,7 @@ type ProgressPayload = {
 type WorkerMsg =
   | { type: "progress"; payload: ProgressPayload }
   | { type: "status"; payload: string }
+  | { type: "debug"; payload: string }
   | { type: "done"; payload: string }
   | { type: "error"; payload: string };
 
@@ -42,6 +43,7 @@ export function useTranscriber() {
 
   const [phase, setPhase] = useState<TranscriberPhase>("idle");
   const [modelProgress, setModelProgress] = useState<number | null>(null);
+  const [step, setStep] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const clearWatchdog = useCallback(() => {
@@ -49,11 +51,15 @@ export function useTranscriber() {
     watchdog.current = null;
   }, []);
 
+  const stepRef = useRef<string | null>(null);
+
   const failStuck = useCallback(() => {
     setPhase("error");
     setModelProgress(null);
     setError(
-      "La transcripción está tardando demasiado. Recargá la página e intentá de nuevo.",
+      `La transcripción se colgó${
+        stepRef.current ? ` en el paso "${stepRef.current}"` : ""
+      }. Recargá la página e intentá de nuevo.`,
     );
     pending.current?.reject(new Error("transcripción colgada"));
     pending.current = null;
@@ -72,7 +78,10 @@ export function useTranscriber() {
       // Cualquier señal de vida reinicia el watchdog.
       if (pending.current) armWatchdog();
 
-      if (msg.type === "progress") {
+      if (msg.type === "debug") {
+        stepRef.current = msg.payload;
+        setStep(msg.payload);
+      } else if (msg.type === "progress") {
         setPhase("loading-model");
         setModelProgress(
           typeof msg.payload.progress === "number"
@@ -122,6 +131,8 @@ export function useTranscriber() {
 
       setPhase("loading-model");
       setModelProgress(null);
+      setStep(null);
+      stepRef.current = null;
       armWatchdog();
       return new Promise<string>((resolve, reject) => {
         pending.current = { resolve, reject };
@@ -134,8 +145,9 @@ export function useTranscriber() {
   const reset = useCallback(() => {
     setPhase("idle");
     setModelProgress(null);
+    setStep(null);
     setError(null);
   }, []);
 
-  return { phase, modelProgress, error, transcribe, reset };
+  return { phase, modelProgress, step, error, transcribe, reset };
 }

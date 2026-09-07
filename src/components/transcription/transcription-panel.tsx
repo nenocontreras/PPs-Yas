@@ -15,7 +15,7 @@ export function TranscriptionPanel({
   initial: string | null;
   onSave: (text: string) => Promise<{ error?: string; ok?: boolean }>;
 }) {
-  const { phase, modelProgress, error, transcribe } = useTranscriber();
+  const { phase, modelProgress, step, error, transcribe } = useTranscriber();
   const [text, setText] = useState(initial ?? "");
   const [showRecorder, setShowRecorder] = useState(!initial);
   const [saving, startSaving] = useTransition();
@@ -86,6 +86,9 @@ export function TranscriptionPanel({
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
               Transcribiendo… los audios largos tardan un poco más.
             </p>
+          )}
+          {step && (
+            <p className="mt-1 font-mono text-[11px] text-muted">· {step}</p>
           )}
         </div>
       )}

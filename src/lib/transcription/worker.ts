@@ -4,27 +4,26 @@
  * dispositivo. El audio llega como Float32Array desde el hilo principal y NUNCA
  * sale del navegador (confidentiality-guard, regla 1).
  *
- * Lo único que este worker descarga de la red es el modelo, desde el CDN de
- * Hugging Face, al navegador del usuario. Eso está permitido: es cliente ↔ CDN
- * de modelos, no sube datos del usuario a ningún lado.
+ * Lo único que este worker descarga de la red es el modelo (CDN de Hugging Face)
+ * y el runtime WASM de ONNX (CDN de jsDelivr) — cliente ↔ CDN, sin subir datos.
  *
- * Backend: WASM (con threads si el navegador tiene aislamiento cross-origin —
- * ver los headers COOP/COEP de `/entrevistas/*` en next.config). NO usamos
- * WebGPU: en transformers.js v4 + whisper se cuelga al reinicializar una segunda
- * sesión en la misma página (cambiar de entrevista, reintentar), sin tirar error.
- * WASM es más lento pero no se traba, y para clips cortos alcanza.
+ * Backend: WASM single-thread. NO WebGPU (en transformers.js v4 + whisper se
+ * cuelga al reinicializar). `numThreads = 1` evita depender de SharedArrayBuffer
+ * / crossOriginIsolated, que es una fuente de cuelgues silenciosos.
  */
 import { pipeline, env } from "@huggingface/transformers";
 
 env.allowLocalModels = false;
+const wasmEnv = env.backends?.onnx?.wasm;
+if (wasmEnv) {
+  wasmEnv.numThreads = 1;
+  wasmEnv.proxy = false;
+}
 
 declare const self: DedicatedWorkerGlobalScope & typeof globalThis;
 
 const MODEL = "onnx-community/whisper-base";
 const TASK = "automatic-speech-recognition";
-
-// q8: ~75 MB de descarga (vs ~270 MB en fp32) y más rápido en WASM, con pérdida
-// de calidad mínima para `base`.
 const DTYPE = "q8" as const;
 
 type TranscribeMsg = { type: "transcribe"; audio: Float32Array };
@@ -36,7 +35,14 @@ type Transcriber = (
 
 let transcriberPromise: Promise<Transcriber> | null = null;
 
+/** Traza el paso actual — se ve en la consola y en la UI. */
+function trace(step: string) {
+  console.log("[transcribe]", step);
+  self.postMessage({ type: "debug", payload: step });
+}
+
 function load(): Promise<Transcriber> {
+  trace("descargando/cargando modelo");
   return pipeline(TASK, MODEL, {
     dtype: DTYPE,
     progress_callback: (p: unknown) =>
@@ -47,8 +53,10 @@ function load(): Promise<Transcriber> {
 self.onmessage = async (e: MessageEvent<TranscribeMsg>) => {
   if (e.data?.type !== "transcribe") return;
   try {
+    trace("audio recibido");
     if (!transcriberPromise) transcriberPromise = load();
     const transcriber = await transcriberPromise;
+    trace("modelo listo");
 
     self.postMessage({ type: "status", payload: "transcribing" });
 
@@ -60,9 +68,11 @@ self.onmessage = async (e: MessageEvent<TranscribeMsg>) => {
       return_timestamps: false,
     });
 
+    trace("inferencia ok");
     self.postMessage({ type: "done", payload: output.text.trim() });
   } catch (err) {
     transcriberPromise = null; // permitir reintentar
+    console.error("[transcribe] error", err);
     self.postMessage({
       type: "error",
       payload:

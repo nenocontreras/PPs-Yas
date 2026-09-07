@@ -74,7 +74,8 @@ const serwist = new Serwist({
         url.hostname.endsWith(".huggingface.co") ||
         url.hostname.endsWith(".hf.co") ||
         (url.hostname === "cdn.jsdelivr.net" &&
-          url.pathname.includes("@huggingface/transformers")),
+          (url.pathname.includes("@huggingface/transformers") ||
+            url.pathname.includes("onnxruntime-web"))),
       handler: new CacheFirst({
         cacheName: "ml-models",
         plugins: [
