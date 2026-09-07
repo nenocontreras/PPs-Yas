@@ -41,11 +41,11 @@
     --primary: #f1f5f9;
     --primary-fg: #0f172a;
     --primary-hover: #cbd5e1;
-    --success: #4ade80;
+    --success: #86efac; /* AA sobre --success-bg */
     --success-bg: #14532d;
-    --warning: #fbbf24;
+    --warning: #fcd34d;
     --warning-bg: #78350f;
-    --danger: #f87171;
+    --danger: #fca5a5; /* AA sobre --danger-bg */
     --danger-bg: #7f1d1d;
   }
 }
