@@ -16,6 +16,8 @@ type ProgressPayload = {
   status?: string;
   file?: string;
   progress?: number;
+  loaded?: number;
+  total?: number;
 };
 
 type WorkerMsg =
@@ -40,6 +42,10 @@ export function useTranscriber() {
     reject: (e: Error) => void;
   } | null>(null);
   const watchdog = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // bytes por archivo, para un % agregado que no salte de un archivo a otro
+  const bytesByFile = useRef<Map<string, { loaded: number; total: number }>>(
+    new Map(),
+  );
 
   const [phase, setPhase] = useState<TranscriberPhase>("idle");
   const [modelProgress, setModelProgress] = useState<number | null>(null);
@@ -83,9 +89,19 @@ export function useTranscriber() {
         setStep(msg.payload);
       } else if (msg.type === "progress") {
         setPhase("loading-model");
+        const { file, loaded, total } = msg.payload;
+        if (file && typeof loaded === "number" && typeof total === "number") {
+          bytesByFile.current.set(file, { loaded, total });
+        }
+        let sumLoaded = 0;
+        let sumTotal = 0;
+        for (const b of bytesByFile.current.values()) {
+          sumLoaded += b.loaded;
+          sumTotal += b.total;
+        }
         setModelProgress(
-          typeof msg.payload.progress === "number"
-            ? Math.min(100, Math.round(msg.payload.progress))
+          sumTotal > 0
+            ? Math.min(100, Math.round((sumLoaded / sumTotal) * 100))
             : null,
         );
       } else if (msg.type === "status" && msg.payload === "transcribing") {
@@ -133,6 +149,7 @@ export function useTranscriber() {
       setModelProgress(null);
       setStep(null);
       stepRef.current = null;
+      bytesByFile.current.clear();
       armWatchdog();
       return new Promise<string>((resolve, reject) => {
         pending.current = { resolve, reject };

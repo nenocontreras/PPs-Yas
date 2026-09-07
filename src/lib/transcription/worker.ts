@@ -4,23 +4,20 @@
  * dispositivo. El audio llega como Float32Array desde el hilo principal y NUNCA
  * sale del navegador (confidentiality-guard, regla 1).
  *
- * Lo único que este worker descarga de la red es el modelo (CDN de Hugging Face)
- * y el runtime WASM de ONNX (CDN de jsDelivr) — cliente ↔ CDN, sin subir datos.
+ * Lo único que baja de la red es el modelo (CDN de Hugging Face); el runtime
+ * WASM de ONNX se sirve de nuestro propio origen (/ort/). Cliente ↔ CDN, sin
+ * subir datos.
  *
- * Backend: WASM single-thread. NO WebGPU (en transformers.js v4 + whisper se
- * cuelga al reinicializar). `numThreads = 1` evita depender de SharedArrayBuffer
- * / crossOriginIsolated, que es una fuente de cuelgues silenciosos.
+ * Backend: WASM single-thread (sin WebGPU, sin threads → sin depender de
+ * SharedArrayBuffer/crossOriginIsolated, dos fuentes de cuelgue).
  */
-import { pipeline, env } from "@huggingface/transformers";
+import { pipeline, env, type DataType } from "@huggingface/transformers";
 
 env.allowLocalModels = false;
 const wasmEnv = env.backends?.onnx?.wasm;
 if (wasmEnv) {
   wasmEnv.numThreads = 1;
   wasmEnv.proxy = false;
-  // Runtime WASM servido desde nuestro propio origen (public/ort/, copiado en
-  // prebuild). Evita el CDN de jsDelivr, CORS/COEP y que el Service Worker lo
-  // tenga que interceptar — era una fuente de cuelgue silencioso.
   wasmEnv.wasmPaths = "/ort/";
 }
 
@@ -28,7 +25,11 @@ declare const self: DedicatedWorkerGlobalScope & typeof globalThis;
 
 const MODEL = "onnx-community/whisper-base";
 const TASK = "automatic-speech-recognition";
-const DTYPE = "q8" as const;
+
+// Orden de intento. `int8` (~77 MB) primero; el `_quantized` (q8) de este modelo
+// viene con tensores de escala faltantes y ORT no puede crear la sesión. `fp32`
+// (~290 MB) es el último recurso pero SIEMPRE funciona en WASM.
+const DTYPES: DataType[] = ["int8", "fp32"];
 
 type TranscribeMsg = { type: "transcribe"; audio: Float32Array };
 
@@ -45,13 +46,26 @@ function trace(step: string) {
   self.postMessage({ type: "debug", payload: step });
 }
 
-function load(): Promise<Transcriber> {
-  trace("descargando/cargando modelo");
-  return pipeline(TASK, MODEL, {
-    dtype: DTYPE,
-    progress_callback: (p: unknown) =>
-      self.postMessage({ type: "progress", payload: p }),
-  }) as Promise<Transcriber>;
+async function load(): Promise<Transcriber> {
+  const progress_callback = (p: unknown) =>
+    self.postMessage({ type: "progress", payload: p });
+
+  let lastErr: unknown;
+  for (const dtype of DTYPES) {
+    try {
+      trace(`cargando modelo (${dtype})`);
+      return (await pipeline(TASK, MODEL, {
+        dtype,
+        progress_callback,
+      })) as Transcriber;
+    } catch (e) {
+      lastErr = e;
+      console.warn(`[transcribe] falló con dtype=${dtype}:`, e);
+    }
+  }
+  throw lastErr instanceof Error
+    ? lastErr
+    : new Error("No se pudo cargar el modelo de transcripción.");
 }
 
 self.onmessage = async (e: MessageEvent<TranscribeMsg>) => {
