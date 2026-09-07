@@ -52,6 +52,9 @@ yarn-error.log*
 *.code-workspace
 .idea/
 
+# runtime WASM de onnxruntime-web, copiado desde node_modules en prebuild
+/public/ort/
+
 # vercel
 .vercel
 

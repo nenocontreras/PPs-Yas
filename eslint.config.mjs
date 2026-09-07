@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     "public/sw.js",
     "public/sw.js.map",
     "public/swe-worker-*.js",
+    // Runtime WASM de onnxruntime-web, copiado desde node_modules en prebuild.
+    "public/ort/**",
     // Design system: previews y runtime de Claude Design, no es código de la app.
     "design-system/**",
   ]),

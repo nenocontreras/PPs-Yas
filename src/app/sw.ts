@@ -6,7 +6,6 @@ import {
   ExpirationPlugin,
   NetworkFirst,
   NetworkOnly,
-  RangeRequestsPlugin,
   Serwist,
 } from "serwist";
 
@@ -29,17 +28,23 @@ const serwist = new Serwist({
     { url: "/~offline", revision: "offline-v1" },
   ],
   skipWaiting: true,
-  // Sin clientsClaim: el SW nuevo toma control recién en la próxima
-  // navegación. Evita ChunkLoadError en pestañas abiertas durante un deploy
-  // (los chunks hasheados viejos ya no existen en el nuevo precache).
-  navigationPreload: true,
+  clientsClaim: true,
   runtimeCaching: [
-    // --- Supabase: datos privados, NUNCA cache-first --------------------------
+    // --- Navegaciones: el SW NO se mete ------------------------------------
+    {
+      // Las páginas del dashboard son SSR con auth y algunas llevan headers
+      // COEP `credentialless` (/entrevistas, /busqueda). Que el SW las intente
+      // cachear rompía la navegación con `no-response`. Van siempre a la red;
+      // el fallback offline de abajo cubre el caso sin conexión.
+      matcher: ({ request, url }) =>
+        request.mode === "navigate" && url.origin === self.location.origin,
+      handler: new NetworkOnly(),
+    },
+    // --- Supabase: datos privados, NUNCA cache-first ----------------------
     {
       // Sesión / tokens y CONTENIDO DE ARCHIVOS (Storage / Evidencia): siempre a
-      // la red, jamás al cache. Dejar documentos o fotos de la empresa en el
-      // CacheStorage del dispositivo contradice "datos privados" (el cache no se
-      // limpia al expirar la sesión ni al cerrar la pestaña).
+      // la red. Dejar documentos o fotos de la empresa en el CacheStorage del
+      // dispositivo contradice "datos privados".
       matcher: ({ url }) =>
         url.hostname.endsWith(".supabase.co") &&
         (url.pathname.startsWith("/auth/v1/") ||
@@ -47,9 +52,7 @@ const serwist = new Serwist({
       handler: new NetworkOnly(),
     },
     {
-      // Sólo REST (metadatos: jornadas, tareas, transcripciones ya anonimizadas):
-      // network-first con TTL corto para que "offline" no sirva datos viejos de
-      // otra sesión indefinidamente. Se limpia además en signOut (Fase 2).
+      // Sólo REST (metadatos ya anonimizados): network-first, TTL corto.
       matcher: ({ url }) =>
         url.hostname.endsWith(".supabase.co") &&
         url.pathname.startsWith("/rest/v1/"),
@@ -62,25 +65,30 @@ const serwist = new Serwist({
         ],
       }),
     },
-    // --- Modelos ML (Whisper / gte-small) + runtime de ONNX -----------------
+    // --- Runtime WASM de ONNX (propio origen, /ort/) ---------------------
     {
-      // Los shards del modelo (cientos de MB) vienen del CDN de Hugging Face y
-      // el `ort-*.wasm` de jsDelivr. Sin regla propia caen en el catch-all de
-      // defaultCache (32 entradas / 1 h): el modelo se re-descarga seguido y la
-      // transcripción no anda offline. CacheFirst + expiración generosa.
-      // No hay datos del usuario acá: es cliente ↔ CDN de modelos.
+      matcher: ({ url }) =>
+        url.origin === self.location.origin && url.pathname.startsWith("/ort/"),
+      handler: new CacheFirst({
+        cacheName: "ort-runtime",
+        plugins: [
+          new CacheableResponsePlugin({ statuses: [200] }),
+          new ExpirationPlugin({ maxEntries: 8, maxAgeSeconds: 60 * 60 * 24 * 90 }),
+        ],
+      }),
+    },
+    // --- Modelo Whisper / gte-small desde el CDN de Hugging Face ----------
+    {
+      // Los shards del modelo (~75 MB). CacheFirst para no re-descargarlos.
+      // No hay datos del usuario: es cliente ↔ CDN de modelos.
       matcher: ({ url }) =>
         url.hostname === "huggingface.co" ||
         url.hostname.endsWith(".huggingface.co") ||
-        url.hostname.endsWith(".hf.co") ||
-        (url.hostname === "cdn.jsdelivr.net" &&
-          (url.pathname.includes("@huggingface/transformers") ||
-            url.pathname.includes("onnxruntime-web"))),
+        url.hostname.endsWith(".hf.co"),
       handler: new CacheFirst({
         cacheName: "ml-models",
         plugins: [
-          new CacheableResponsePlugin({ statuses: [0, 200] }),
-          new RangeRequestsPlugin(),
+          new CacheableResponsePlugin({ statuses: [200] }),
           new ExpirationPlugin({
             maxEntries: 64,
             maxAgeSeconds: 60 * 60 * 24 * 90,
@@ -89,13 +97,12 @@ const serwist = new Serwist({
         ],
       }),
     },
-    // --- Resto (estáticos, fuentes, etc.) ------------------------------------
+    // --- Resto (estáticos, fuentes, imágenes) ----------------------------
     ...defaultCache,
   ],
   fallbacks: {
     entries: [
       {
-        // Página que se muestra al navegar sin conexión a algo no cacheado.
         url: "/~offline",
         matcher({ request }) {
           return request.destination === "document";

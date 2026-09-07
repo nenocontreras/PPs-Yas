@@ -27,9 +27,10 @@ const nextConfig: NextConfig = {
 const withSerwist = withSerwistInit({
   swSrc: "src/app/sw.ts",
   swDest: "public/sw.js",
-  // Los .wasm de onnxruntime (hasta ~24 MB) no van al precache del app shell;
-  // se cachean en runtime cuando el usuario abre la transcripción.
-  exclude: [/\.wasm$/, /ort-.*\.js$/],
+  // Los .wasm de onnxruntime (~25 MB c/u en public/ort/) no van al precache del
+  // app shell; se cachean en runtime (regla "ort-runtime" en sw.ts) al abrir la
+  // transcripción. El glue .mjs sí se precachea (es chico).
+  exclude: [/\.wasm$/],
   // En desarrollo el SW molesta más de lo que ayuda (cachea builds viejos).
   disable: process.env.NODE_ENV === "development",
   // reloadOnOnline se deja en false (default): recargar en cada reconexión

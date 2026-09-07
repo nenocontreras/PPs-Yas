@@ -18,6 +18,10 @@ const wasmEnv = env.backends?.onnx?.wasm;
 if (wasmEnv) {
   wasmEnv.numThreads = 1;
   wasmEnv.proxy = false;
+  // Runtime WASM servido desde nuestro propio origen (public/ort/, copiado en
+  // prebuild). Evita el CDN de jsDelivr, CORS/COEP y que el Service Worker lo
+  // tenga que interceptar — era una fuente de cuelgue silencioso.
+  wasmEnv.wasmPaths = "/ort/";
 }
 
 declare const self: DedicatedWorkerGlobalScope & typeof globalThis;
