@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { LogoLockup } from "@/components/brand";
 import { MoreIcon } from "@/components/icons";
 import { LogoutButton } from "@/components/logout-button";
 import { MODULES } from "@/lib/modules";
@@ -74,11 +75,8 @@ export function DashboardNav({ userEmail }: { userEmail?: string }) {
         aria-label="Navegación"
         className="hidden lg:flex lg:w-60 lg:shrink-0 lg:flex-col lg:border-r lg:border-line lg:bg-surface"
       >
-        <div className="flex h-16 items-center gap-2 px-5">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-sm font-bold text-primary-fg">
-            PPS
-          </span>
-          <span className="text-sm font-semibold">Gestión de PPS</span>
+        <div className="flex h-16 items-center px-5">
+          <LogoLockup markSize={36} />
         </div>
         <nav className="flex flex-1 flex-col gap-1 px-3 py-2">
           {MODULES.map((m) => {

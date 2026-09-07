@@ -48,6 +48,10 @@ yarn-error.log*
 .claude/hooks/forbidden-terms.txt
 .claude/settings.local.json
 
+# editores
+*.code-workspace
+.idea/
+
 # vercel
 .vercel
 

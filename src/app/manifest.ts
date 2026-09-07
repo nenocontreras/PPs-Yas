@@ -20,9 +20,29 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#0f172a",
     categories: ["education", "productivity"],
     prefer_related_applications: false,
-    // TODO Fase 8: agregar `screenshots` (1-2 capturas reales, 390x844 narrow)
-    // para el diálogo de instalación enriquecido de Chrome Android.
+    shortcuts: [
+      {
+        name: "Registrar jornada",
+        short_name: "Jornada",
+        url: "/bitacora",
+      },
+      {
+        name: "Nueva entrevista",
+        short_name: "Entrevista",
+        url: "/entrevistas",
+      },
+    ],
+    // TODO Fase 8: agregar `screenshots` (1-2 capturas reales de la app,
+    // 390x844 narrow + una wide) para el diálogo de instalación enriquecido
+    // de Chrome Android. Requiere la app deployada para capturarlas.
     icons: [
+      {
+        // Favicon vectorial + fuente para navegadores que lo prefieren.
+        src: "/icons/icon.svg",
+        sizes: "any",
+        type: "image/svg+xml",
+        purpose: "any",
+      },
       {
         src: "/icons/icon-192.png",
         sizes: "192x192",

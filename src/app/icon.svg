@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <rect width="96" height="96" rx="24" fill="#0f172a"/>
+    <text x="48" y="55" text-anchor="middle" fill="#f8fafc"
+      font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, ui-sans-serif, system-ui, sans-serif" font-weight="600" font-size="27" letter-spacing="0.5">PPS</text>
+    <rect x="30" y="64" width="36" height="6" rx="3" fill="#f8fafc" opacity="0.3"/>
+    <rect x="30" y="64" width="24" height="6" rx="3" fill="#f8fafc"/>
+</svg>
