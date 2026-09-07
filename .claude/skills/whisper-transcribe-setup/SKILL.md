@@ -19,6 +19,7 @@ npm i @huggingface/transformers
 
 1. **Web Worker** (`src/lib/transcription/worker.ts`): carga el modelo y corre la inferencia fuera del hilo principal. Nunca bloquear la UI del celular.
 2. **Modelo**: `onnx-community/whisper-base` (o `whisper-small` si el dispositivo aguanta). `base` es el mejor equilibrio para un celular gama media. Español: pasar `language: "spanish"` y `task: "transcribe"`.
+   - **`dtype`**: pasarlo explícito. Sin `dtype`, WebGPU baja `fp32` (~270 MB para `base`). Con `dtype: "q8"` son ~70 MB, misma calidad práctica, y sirve igual en WebGPU y WASM. (En WASM el default ya es `q8`; el problema es WebGPU.)
 3. **Progreso**: el callback `progress_callback` del `pipeline` reporta la descarga del modeloz (se cachea en el navegador con Cache API tras la primera vez). Mostrar barra de "descargando modelo" y luego "transcribiendo".
 4. **Entrada de audio**: `MediaRecorder` para grabar, o `<input type="file" accept="audio/*">` para subir. Decodificar a `Float32Array` mono 16 kHz con `AudioContext` antes de pasar al pipeline.
 5. **Salida**: el texto va a un `<textarea>` editable. El usuario corrige y **anonimiza nombres** antes de guardar. Recién ahí se persiste (`transcripcion` en la tabla `entrevistas`).

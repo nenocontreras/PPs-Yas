@@ -65,8 +65,8 @@ export function TranscriptionPanel({
                 {modelProgress != null ? ` · ${modelProgress}%` : "…"}
               </p>
               <p className="mt-1 text-xs text-muted">
-                Solo la primera vez (~40 MB). Después queda guardado en el
-                navegador.
+                Solo la primera vez (~75 MB). Después queda guardado en el
+                navegador y la transcripción es casi instantánea.
               </p>
               {modelProgress != null && (
                 <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
@@ -81,7 +81,7 @@ export function TranscriptionPanel({
           {phase === "transcribing" && (
             <p className="flex items-center gap-2 text-sm font-medium">
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
-              Transcribiendo… puede tardar varios minutos.
+              Transcribiendo… los audios largos tardan un poco más.
             </p>
           )}
         </div>

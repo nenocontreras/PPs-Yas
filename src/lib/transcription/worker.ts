@@ -17,6 +17,10 @@ declare const self: DedicatedWorkerGlobalScope & typeof globalThis;
 const MODEL = "onnx-community/whisper-base";
 const TASK = "automatic-speech-recognition";
 
+// q8: ~70 MB de descarga (vs ~270 MB en fp32) y bastante más rápido en WASM,
+// con pérdida de calidad mínima para `base`. Sirve igual en WebGPU y en WASM.
+const DTYPE = "q8" as const;
+
 type TranscribeMsg = { type: "transcribe"; audio: Float32Array };
 
 type Transcriber = (
@@ -33,8 +37,11 @@ function load(): Promise<Transcriber> {
   // WebGPU si está disponible (mucho más rápido); si no, WASM.
   return pipeline(TASK, MODEL, {
     device: "webgpu",
+    dtype: DTYPE,
     progress_callback,
-  }).catch(() => pipeline(TASK, MODEL, { progress_callback })) as Promise<Transcriber>;
+  }).catch(() =>
+    pipeline(TASK, MODEL, { dtype: DTYPE, progress_callback }),
+  ) as Promise<Transcriber>;
 }
 
 self.onmessage = async (e: MessageEvent<TranscribeMsg>) => {
