@@ -1,12 +1,18 @@
 /// <reference lib="webworker" />
 /**
- * Web Worker de transcripción. Carga Whisper (WASM / WebGPU) y transcribe
- * ENTERAMENTE en el dispositivo. El audio llega como Float32Array desde el hilo
- * principal y NUNCA sale del navegador (confidentiality-guard, regla 1).
+ * Web Worker de transcripción. Carga Whisper y transcribe ENTERAMENTE en el
+ * dispositivo. El audio llega como Float32Array desde el hilo principal y NUNCA
+ * sale del navegador (confidentiality-guard, regla 1).
  *
  * Lo único que este worker descarga de la red es el modelo, desde el CDN de
  * Hugging Face, al navegador del usuario. Eso está permitido: es cliente ↔ CDN
  * de modelos, no sube datos del usuario a ningún lado.
+ *
+ * Backend: WASM (con threads si el navegador tiene aislamiento cross-origin —
+ * ver los headers COOP/COEP de `/entrevistas/*` en next.config). NO usamos
+ * WebGPU: en transformers.js v4 + whisper se cuelga al reinicializar una segunda
+ * sesión en la misma página (cambiar de entrevista, reintentar), sin tirar error.
+ * WASM es más lento pero no se traba, y para clips cortos alcanza.
  */
 import { pipeline, env } from "@huggingface/transformers";
 
@@ -17,8 +23,8 @@ declare const self: DedicatedWorkerGlobalScope & typeof globalThis;
 const MODEL = "onnx-community/whisper-base";
 const TASK = "automatic-speech-recognition";
 
-// q8: ~70 MB de descarga (vs ~270 MB en fp32) y bastante más rápido en WASM,
-// con pérdida de calidad mínima para `base`. Sirve igual en WebGPU y en WASM.
+// q8: ~75 MB de descarga (vs ~270 MB en fp32) y más rápido en WASM, con pérdida
+// de calidad mínima para `base`.
 const DTYPE = "q8" as const;
 
 type TranscribeMsg = { type: "transcribe"; audio: Float32Array };
@@ -31,17 +37,11 @@ type Transcriber = (
 let transcriberPromise: Promise<Transcriber> | null = null;
 
 function load(): Promise<Transcriber> {
-  const progress_callback = (p: unknown) =>
-    self.postMessage({ type: "progress", payload: p });
-
-  // WebGPU si está disponible (mucho más rápido); si no, WASM.
   return pipeline(TASK, MODEL, {
-    device: "webgpu",
     dtype: DTYPE,
-    progress_callback,
-  }).catch(() =>
-    pipeline(TASK, MODEL, { dtype: DTYPE, progress_callback }),
-  ) as Promise<Transcriber>;
+    progress_callback: (p: unknown) =>
+      self.postMessage({ type: "progress", payload: p }),
+  }) as Promise<Transcriber>;
 }
 
 self.onmessage = async (e: MessageEvent<TranscribeMsg>) => {

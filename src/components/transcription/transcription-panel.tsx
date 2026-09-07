@@ -58,25 +58,28 @@ export function TranscriptionPanel({
           {phase === "decoding" && (
             <p className="text-sm text-muted">Preparando el audio…</p>
           )}
-          {phase === "loading-model" && (
+          {phase === "loading-model" && modelProgress != null && (
             <>
               <p className="text-sm font-medium">
-                Descargando el modelo de transcripción
-                {modelProgress != null ? ` · ${modelProgress}%` : "…"}
+                Descargando el modelo de transcripción · {modelProgress}%
               </p>
               <p className="mt-1 text-xs text-muted">
                 Solo la primera vez (~75 MB). Después queda guardado en el
-                navegador y la transcripción es casi instantánea.
+                navegador.
               </p>
-              {modelProgress != null && (
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-                  <div
-                    className="h-full rounded-full bg-primary transition-[width]"
-                    style={{ width: `${modelProgress}%` }}
-                  />
-                </div>
-              )}
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+                <div
+                  className="h-full rounded-full bg-primary transition-[width]"
+                  style={{ width: `${modelProgress}%` }}
+                />
+              </div>
             </>
+          )}
+          {phase === "loading-model" && modelProgress == null && (
+            <p className="flex items-center gap-2 text-sm font-medium">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
+              Preparando el modelo de transcripción…
+            </p>
           )}
           {phase === "transcribing" && (
             <p className="flex items-center gap-2 text-sm font-medium">
