@@ -233,6 +233,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      ia_usos: {
+        Row: {
+          id: string;
+          user_id: string;
+          proveedor: string;
+          entrevista_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          proveedor: string;
+          entrevista_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          proveedor?: string;
+          entrevista_id?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: {

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getEntrevista } from "@/lib/entrevistas";
-import { hasAnthropicKey } from "@/lib/resumen";
+import { hasSummaryProvider } from "@/lib/resumen";
 import { requireUser } from "@/lib/supabase/require-user";
 
 import { EntrevistaDetail } from "./entrevista-detail";
@@ -20,7 +20,7 @@ export default async function EntrevistaPage({
   return (
     <EntrevistaDetail
       entrevista={entrevista}
-      resumenHabilitado={hasAnthropicKey()}
+      resumenHabilitado={hasSummaryProvider()}
     />
   );
 }

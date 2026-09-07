@@ -5,10 +5,17 @@ import { redirect } from "next/navigation";
 
 import type { TemasDetectados } from "@/lib/entrevistas";
 import { fieldError, optionalStr, str, type FormState } from "@/lib/form";
-import { generarResumen, hasAnthropicKey } from "@/lib/resumen";
+import { generarResumen, hasSummaryProvider } from "@/lib/resumen";
 import { requireUser } from "@/lib/supabase/require-user";
 
 const ROUTE = "/entrevistas";
+
+/**
+ * Tope de resúmenes por usuario en 24 h. En la instancia pública el resumen
+ * corre con las API keys del servidor, así que este límite evita que un abuso
+ * consuma las cuotas. Configurable con AI_SUMMARY_DAILY_LIMIT.
+ */
+const RESUMEN_LIMITE_DIARIO = Number(process.env.AI_SUMMARY_DAILY_LIMIT) || 15;
 
 function parseMeta(formData: FormData) {
   const errors: Record<string, string> = {};
@@ -107,16 +114,30 @@ export async function saveTranscripcion(
   return { ok: true };
 }
 
-/** Parte C: resumen vía API de Claude sobre el texto ya guardado. */
+/** Parte C: resumen vía IA (multi-proveedor) sobre el texto ya guardado. */
 export async function generarResumenEntrevista(
   id: string,
 ): Promise<{ ok?: boolean; error?: string }> {
   const { supabase, user } = await requireUser();
 
-  if (!hasAnthropicKey()) {
+  if (!hasSummaryProvider()) {
     return {
       error:
-        "Falta configurar ANTHROPIC_API_KEY en el servidor para generar resúmenes.",
+        "El servidor todavía no tiene configurada ninguna IA para generar resúmenes.",
+    };
+  }
+
+  // Rate-limit: N resúmenes por usuario en las últimas 24 h.
+  const desde = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { count: usos } = await supabase
+    .from("ia_usos")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .gte("created_at", desde);
+
+  if ((usos ?? 0) >= RESUMEN_LIMITE_DIARIO) {
+    return {
+      error: `Llegaste al límite de ${RESUMEN_LIMITE_DIARIO} resúmenes por día. Probá de nuevo mañana o editá el resumen a mano.`,
     };
   }
 
@@ -134,10 +155,12 @@ export async function generarResumenEntrevista(
 
   let resumen: string;
   let temas: TemasDetectados;
+  let proveedor: string;
   try {
     const out = await generarResumen(transcripcion);
     resumen = out.resumen;
     temas = out.temas;
+    proveedor = out.proveedor;
   } catch (err) {
     return {
       error:
@@ -154,6 +177,11 @@ export async function generarResumenEntrevista(
     .eq("user_id", user.id);
 
   if (error) return { error: "El resumen se generó pero no se pudo guardar." };
+
+  // Log de uso (best-effort: si falla no rompemos el resultado).
+  await supabase
+    .from("ia_usos")
+    .insert({ user_id: user.id, proveedor, entrevista_id: id });
 
   revalidatePath(`${ROUTE}/${id}`);
   return { ok: true };

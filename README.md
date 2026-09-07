@@ -26,8 +26,9 @@ entrevistas ni personas. Además:
 - **El audio de las entrevistas nunca sale del dispositivo.** Se transcribe en el
   navegador con Whisper (WASM/WebGPU). Ninguna ruta del backend recibe audio y
   la base no guarda audio ni rutas de audio.
-- A la API de Claude (resumen de entrevistas) se envía **solo texto**, y solo el
-  que el usuario ya revisó y anonimizó.
+- A la API de IA que hace el resumen de entrevistas (Gemini, OpenAI, Claude u
+  OpenRouter, según lo que configure quien despliega) se envía **solo texto**, y
+  solo el que el usuario ya revisó y anonimizó.
 
 ---
 
@@ -35,8 +36,10 @@ entrevistas ni personas. Además:
 
 ### Opción A — usar la instancia pública
 
-Si hay un deploy público disponible, entrá, creá una cuenta con tu email,
-confirmala desde el mail que te llega, y listo. Tus datos quedan en tu cuenta.
+Entrá a **[p-ps-yas.vercel.app](https://p-ps-yas.vercel.app)**, creá una cuenta
+con tu email, confirmala desde el mail que te llega, y listo. Tus datos quedan
+aislados en tu cuenta (RLS). El resumen de entrevistas puede tener un límite
+diario por usuario.
 
 ### Opción B — desplegar tu propia instancia
 
@@ -51,14 +54,15 @@ Recomendada si querés control total de tus datos. Necesitás una cuenta gratis 
      si vas a correr en local).
    - *Authentication → Providers → Email*: dejá **Confirm email** activado.
    - **Aplicá las migraciones** de [`supabase/migrations/`](./supabase/migrations)
-     en orden (`0001` → `0007`) desde el *SQL Editor* (pegá y ejecutá cada
+     en orden (`0001` → `0008`) desde el *SQL Editor* (pegá y ejecutá cada
      archivo). Antes de `0005`, creá un bucket de Storage **privado** llamado
      `evidencia` (*Storage → New bucket*, Private, límite 10 MB).
 3. **Vercel**: importá el repo y configurá las variables de entorno (abajo). El
    build ya está fijado a webpack (`next build --webpack`).
-4. *(Opcional)* Para el resumen de entrevistas, conseguí una API key de Anthropic
-   y ponela como `ANTHROPIC_API_KEY` en Vercel. Sin ella todo funciona salvo ese
-   botón.
+4. *(Opcional)* Para el resumen de entrevistas, configurá al menos una API key de
+   IA (`GEMINI_API_KEY` — tiene tier gratis —, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
+   u `OPENROUTER_API_KEY`). Si ponés varias, la app rota entre ellas y cae a la
+   siguiente si una falla. Sin ninguna, todo funciona salvo ese botón.
 
 ### Variables de entorno
 
@@ -69,8 +73,9 @@ está en `.gitignore` — **nunca se commitea**).
 |----------|--------|----------|
 | `NEXT_PUBLIC_SUPABASE_URL` | cliente + servidor | URL del proyecto Supabase |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | cliente + servidor | Clave anónima (pública por diseño; el aislamiento lo hace RLS) |
-| `NEXT_PUBLIC_SITE_URL` | cliente + servidor | URL pública para los links de email de Supabase. Vacío en local; en Vercel se resuelve solo vía `VERCEL_URL` |
-| `ANTHROPIC_API_KEY` | **solo servidor** | Resumen de entrevistas. Nunca con prefijo `NEXT_PUBLIC_` |
+| `NEXT_PUBLIC_SITE_URL` | cliente + servidor | URL pública para los links de email de Supabase. Vacío en local; en Vercel, seteala a la URL de producción (si no, cae a `VERCEL_URL`, que cambia por deploy) |
+| `GEMINI_API_KEY` · `OPENAI_API_KEY` · `ANTHROPIC_API_KEY` · `OPENROUTER_API_KEY` | **solo servidor** | Resumen de entrevistas. Al menos una; si hay varias, rotan. Nunca con prefijo `NEXT_PUBLIC_` |
+| `AI_SUMMARY_PROVIDER_ORDER` · `AI_SUMMARY_DAILY_LIMIT` · `*_MODEL` | **solo servidor** | Opcionales — ver [`.env.example`](./.env.example) |
 
 ---
 
@@ -105,7 +110,7 @@ npm run dev                  # http://localhost:3000
 | Auth / DB / Storage | Supabase (Postgres + Auth + Storage + pgvector) |
 | Transcripción | `@huggingface/transformers` (Whisper `whisper-base`), en un Web Worker, client-side |
 | Embeddings (búsqueda) | `@huggingface/transformers` (`Supabase/gte-small`, 384 dims), client-side |
-| Resumen | API de Claude (Anthropic), `claude-sonnet-5`, solo texto, server-side |
+| Resumen | adaptador multi-proveedor (`src/lib/resumen/`) — Gemini · OpenAI · Claude · OpenRouter, rotación + fallback, solo texto, server-side |
 | Hosting | Vercel (frontend) + Supabase (backend) |
 
 ```
@@ -127,7 +132,7 @@ src/
     supabase/            clientes browser / server / proxy + requireUser
     transcription/  embeddings/   Web Workers de los modelos
     <modulo>.ts          queries tipadas por módulo
-supabase/migrations/     0001_init … 0007_busqueda
+supabase/migrations/     0001_init … 0008_ia_usos
 design-system/           tokens + previews de componentes (sincronizado con Claude Design)
 .claude/                 skills, subagents y hooks que blindan las reglas de CLAUDE.md
 ```

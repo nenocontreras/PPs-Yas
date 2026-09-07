@@ -1,18 +1,15 @@
-import "server-only";
-
-import Anthropic from "@anthropic-ai/sdk";
-
-import type { TemasDetectados } from "./entrevistas";
+import type { TemasDetectados } from "@/lib/entrevistas";
 
 /**
- * Resumen de entrevistas vía API de Claude (.claude/skills/claude-api-summary).
- * REGLA: solo se manda el texto transcripto que el usuario ya revisó y
- * anonimizó. Nunca audio, nunca imágenes. La API key vive solo en el servidor.
+ * Prompt y parsing del resumen de entrevistas. Compartido por todos los
+ * proveedores (Gemini / OpenAI / Claude / OpenRouter).
+ *
+ * REGLA DE CONFIDENCIALIDAD (.claude/skills/confidentiality-guard): a cualquier
+ * proveedor se le manda SOLO el texto transcripto que el usuario ya revisó y
+ * anonimizó. Nunca audio, nunca imágenes, nunca metadatos de personas.
  */
 
-const MODEL = "claude-sonnet-5";
-
-const SYSTEM = `Sos un asistente que resume entrevistas de una Práctica Profesional
+export const SYSTEM = `Sos un asistente que resume entrevistas de una Práctica Profesional
 Supervisada de la carrera de Administración de Empresas. Recibís una transcripción
 que el usuario ya anonimizó (sin nombres propios de personas ni de la empresa).
 
@@ -32,9 +29,7 @@ Reglas:
 - "citas": 2 a 3 como máximo, breves y textuales; son CANDIDATAS, no definitivas.
 - Si una lista no tiene contenido en la transcripción, devolvela vacía [].`;
 
-export function hasAnthropicKey(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
-}
+export const MAX_TOKENS = 1500;
 
 function stripFences(s: string): string {
   return s
@@ -70,29 +65,16 @@ function toMarkdown(ejecutivo: string, t: TemasDetectados): string {
   ].join("\n");
 }
 
-export async function generarResumen(transcripcion: string): Promise<{
+/** Convierte la respuesta cruda del modelo en `{ resumen, temas }`. */
+export function parseResumen(crudo: string): {
   resumen: string;
   temas: TemasDetectados;
-}> {
-  const client = new Anthropic();
-
-  const msg = await client.messages.create({
-    model: MODEL,
-    max_tokens: 1500,
-    system: SYSTEM,
-    messages: [{ role: "user", content: transcripcion }],
-  });
-
-  const text = msg.content
-    .filter((b): b is Anthropic.TextBlock => b.type === "text")
-    .map((b) => b.text)
-    .join("\n");
-
+} {
   let parsed: Record<string, unknown>;
   try {
-    parsed = JSON.parse(stripFences(text));
+    parsed = JSON.parse(stripFences(crudo));
   } catch {
-    throw new Error("La API devolvió un formato inesperado. Probá de nuevo.");
+    throw new Error("La IA devolvió un formato inesperado.");
   }
 
   const temas: TemasDetectados = {

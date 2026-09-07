@@ -15,7 +15,7 @@ Repositorio: público en GitHub. Licencia: MIT (o la que se defina).
 - El código de este repo no debe contener nunca datos reales de ninguna empresa, entrevista, ni información identificable de personas.
 - Todo dato generado por un usuario (bitácora, entrevistas, evidencia) pertenece exclusivamente a ese usuario y debe estar protegido por Row Level Security (RLS) en Postgres.
 - **El audio de las entrevistas nunca se transmite a un servidor ni a una API externa.** La transcripción corre en el dispositivo del usuario (navegador/celular) vía Whisper WASM (`transformers.js`). Ninguna ruta de backend debe recibir ni almacenar archivos de audio.
-- Cualquier envío de datos a la API de Claude (resumen de entrevistas) se hace **solo con texto ya transcripto**, nunca con audio.
+- Cualquier envío de datos a una API de IA (resumen de entrevistas — Gemini / OpenAI / Claude / OpenRouter) se hace **solo con texto ya transcripto y anonimizado**, nunca con audio ni imágenes.
 
 Si en algún momento una tarea pedida implica romper alguno de estos puntos (ej: "subamos el audio al servidor para procesarlo más rápido"), Claude Code debe señalarlo explícitamente antes de implementarlo, no hacerlo en silencio.
 
@@ -25,7 +25,8 @@ Si en algún momento una tarea pedida implica romper alguno de estos puntos (ej:
 - **PWA**: `@serwist/next` (manifest + service worker). Build con `--webpack` (Serwist plugin no soporta Turbopack en Next 16).
 - **Backend/DB**: Supabase (Postgres + Auth + Storage + pgvector)
 - **Transcripción**: `@huggingface/transformers` (Whisper, WASM/WebGPU, client-side)
-- **Resumen / búsqueda**: API de Claude (Anthropic) sobre texto + embeddings client-side
+- **Resumen de entrevistas**: adaptador multi-proveedor (`src/lib/resumen/`) — Gemini / OpenAI / Claude / OpenRouter, con rotación y fallback; solo texto ya anonimizado
+- **Búsqueda**: embeddings client-side (`gte-small`) + pgvector
 - **Hosting**: Vercel (frontend) + Supabase (backend)
 
 ## Reglas de modelo de datos
@@ -69,5 +70,5 @@ Claude Code no necesita el contenido de estos documentos para programar la app �
 
 - No agregar autenticación de terceros más allá de Supabase Auth sin que se pida explícitamente.
 - No introducir una vector DB externa (Pinecone, Weaviate, etc.) — pgvector alcanza para el volumen de este proyecto.
-- No subir `.env`, claves de Supabase/Anthropic, ni ningún dato de ejemplo con información real de empresas o personas al repo público.
+- No subir `.env`, claves de Supabase ni de ningún proveedor de IA (Gemini, OpenAI, Anthropic, OpenRouter), ni ningún dato de ejemplo con información real de empresas o personas al repo público.
 - No implementar la apertura multi-usuario / onboarding para otros estudiantes hasta cerrar la primera versión completa para un solo usuario (Fase 8).

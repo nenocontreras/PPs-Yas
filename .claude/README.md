@@ -13,7 +13,7 @@ no solo "de memoria". Copiar tal cual a la raíz del repo.
 | `create-migration` | Genera una migración SQL validada (`/create-migration`). | Usuario |
 | `new-module` | Scaffold de un módulo del dashboard (`/new-module`). | Usuario |
 | `whisper-transcribe-setup` | Transcripción client-side con transformers.js / Whisper WASM. | Ambos |
-| `claude-api-summary` | Llamado a la API de Claude para resumir entrevistas (solo texto). | Ambos |
+| `claude-api-summary` | Resumen de entrevistas con IA — adaptador multi-proveedor (Gemini/OpenAI/Claude/OpenRouter), solo texto. | Ambos |
 
 ### Subagents (`.claude/agents/`)
 | Agente | Cuándo usarlo |

@@ -111,7 +111,7 @@ export function EntrevistaDetail({
         />
       </section>
 
-      {/* Resumen (API de Claude) */}
+      {/* Resumen (IA — texto ya anonimizado) */}
       <section className="mt-6">
         <h2 className="mb-2 text-sm font-semibold">Resumen</h2>
         <ResumenPanel
@@ -251,14 +251,13 @@ function ResumenPanel({
       <div className="rounded-xl border border-line bg-surface p-4">
         {!habilitado && (
           <Alert tone="warning" className="mb-3">
-            Para generar resúmenes hace falta configurar{" "}
-            <code>ANTHROPIC_API_KEY</code> en el servidor.
+            El servidor todavía no tiene configurada ninguna IA para generar
+            resúmenes.
           </Alert>
         )}
         <p className="text-sm text-muted">
-          Se le manda a la API de Claude <b>solo</b> el texto transcripto que
-          guardaste. Devuelve resumen ejecutivo, tareas, fricciones y citas
-          candidatas.
+          Se le manda a la IA <b>solo</b> el texto transcripto que guardaste.
+          Devuelve resumen ejecutivo, tareas, fricciones y citas candidatas.
         </p>
         {error && (
           <p className="mt-2 text-xs text-danger" role="alert">
