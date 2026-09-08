@@ -10,16 +10,27 @@ Regla que no se negocia (`confidentiality-guard`): **el audio nunca sale del dis
 ## Dependencia
 
 ```
-npm i @huggingface/transformers
+npm i @huggingface/transformers@3
 ```
 
-(`@xenova/transformers` es el paquete viejo; el actual es `@huggingface/transformers` v3+, con backend WASM y WebGPU.)
+(`@xenova/transformers` es el viejo; el actual es `@huggingface/transformers`.)
+
+**Quedarse en la 3.x, versión exacta pinneada.** La 4.x arrastra un
+`onnxruntime-web` `-dev` (nightly) que rompe los modelos cuantizados de whisper
+al crear la sesión:
+`ERROR_CODE: 1 ... TransposeDQWeightsForMatMulNBits Missing required scale`.
+Con la 3.8.1 (onnxruntime-web 1.22) `dtype: "q8"` en `whisper-base` funciona
+(~73 MB, sesión en ~10-40 s según el dispositivo). Verificado bajando los
+`.onnx` y probando `ort.InferenceSession.create(..., {executionProviders:["wasm"]})`.
 
 ## Arquitectura
 
 1. **Web Worker** (`src/lib/transcription/worker.ts`): carga el modelo y corre la inferencia fuera del hilo principal. Nunca bloquear la UI del celular.
-2. **Modelo**: `onnx-community/whisper-base` (o `whisper-small` si el dispositivo aguanta). `base` es el mejor equilibrio para un celular gama media. Español: pasar `language: "spanish"` y `task: "transcribe"`.
-   - **`dtype`**: pasarlo explícito. Sin `dtype`, WebGPU baja `fp32` (~270 MB para `base`). Con `dtype: "q8"` son ~70 MB, misma calidad práctica, y sirve igual en WebGPU y WASM. (En WASM el default ya es `q8`; el problema es WebGPU.)
+2. **Modelo**: `onnx-community/whisper-base`, `dtype: "q8"` explícito (~73 MB). Español: `language: "spanish"`, `task: "transcribe"`.
+   - **Backend WASM, NO WebGPU.** En transformers.js WebGPU + whisper se cuelga al reinicializar una segunda sesión en la misma página, sin tirar error.
+   - **`env.backends.onnx.wasm.numThreads = 1`** (sin threads → no depende de `SharedArrayBuffer` / `crossOriginIsolated`, una fuente de cuelgue) y **`wasmPaths = "/ort/"`** (runtime servido de `public/ort/`, copiado de `node_modules/onnxruntime-web/dist/` en `prebuild`; el CDN de jsDelivr y que el SW/proxy lo intercepten colgaba la init).
+   - **El proxy de sesión (`src/proxy.ts`) NO debe cubrir `/ort/` ni `.wasm`/`.mjs`** — cada request dispararía `supabase.auth.getUser()` y en móvil eso cuelga la carga.
+   - Worker **único por pestaña** (`worker-client.ts` singleton, nunca `terminate()`) → el modelo carga una sola vez.
 3. **Progreso**: el callback `progress_callback` del `pipeline` reporta la descarga del modeloz (se cachea en el navegador con Cache API tras la primera vez). Mostrar barra de "descargando modelo" y luego "transcribiendo".
 4. **Entrada de audio**: `MediaRecorder` para grabar, o `<input type="file" accept="audio/*">` para subir. Decodificar a `Float32Array` mono 16 kHz con `AudioContext` antes de pasar al pipeline.
 5. **Salida**: el texto va a un `<textarea>` editable. El usuario corrige y **anonimiza nombres** antes de guardar. Recién ahí se persiste (`transcripcion` en la tabla `entrevistas`).

@@ -8,6 +8,13 @@
 import { pipeline, env } from "@huggingface/transformers";
 
 env.allowLocalModels = false;
+const wasmEnv = env.backends?.onnx?.wasm;
+if (wasmEnv) {
+  wasmEnv.numThreads = 1;
+  wasmEnv.proxy = false;
+  // Runtime WASM desde nuestro propio origen (ver worker de transcripción).
+  wasmEnv.wasmPaths = "/ort/";
+}
 
 declare const self: DedicatedWorkerGlobalScope & typeof globalThis;
 
@@ -23,13 +30,17 @@ type Extractor = (
 
 let extractorPromise: Promise<Extractor> | null = null;
 
+const fePipeline = pipeline as (
+  task: string,
+  model: string,
+  opts: Record<string, unknown>,
+) => Promise<Extractor>;
+
 function load(): Promise<Extractor> {
   const progress_callback = (p: unknown) =>
     self.postMessage({ type: "progress", payload: p });
-  return pipeline(TASK, MODEL, {
-    device: "webgpu",
-    progress_callback,
-  }).catch(() => pipeline(TASK, MODEL, { progress_callback })) as Promise<Extractor>;
+  // WASM (sin WebGPU: en transformers.js se cuelga al reinicializar).
+  return fePipeline(TASK, MODEL, { progress_callback });
 }
 
 self.onmessage = async (e: MessageEvent<EmbedMsg>) => {

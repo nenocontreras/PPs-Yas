@@ -28,10 +28,9 @@ console.log("[transcribe] worker cargado");
 const MODEL = "onnx-community/whisper-base";
 const TASK = "automatic-speech-recognition";
 
-// Orden de intento. `int8` (~77 MB) primero; el `_quantized` (q8) de este modelo
-// viene con tensores de escala faltantes y ORT no puede crear la sesión. `fp32`
-// (~290 MB) es el último recurso pero SIEMPRE funciona en WASM.
-const DTYPES: DataType[] = ["int8", "fp32"];
+// `q8` (~73 MB) es el que anda con onnxruntime-web 1.22 (transformers.js v3).
+// `fp32` (~280 MB) como último recurso si algún navegador raro falla con q8.
+const DTYPES: DataType[] = ["q8", "fp32"];
 
 type TranscribeMsg = { type: "transcribe"; audio: Float32Array };
 
@@ -41,6 +40,14 @@ type Transcriber = (
 ) => Promise<{ text: string }>;
 
 let transcriberPromise: Promise<Transcriber> | null = null;
+
+// La firma tipada de `pipeline` genera una unión enorme (todas las tasks) que
+// hace explotar a tsc. Acá solo nos importa la de ASR.
+const asrPipeline = pipeline as (
+  task: string,
+  model: string,
+  opts: Record<string, unknown>,
+) => Promise<Transcriber>;
 
 /** Traza el paso actual — se ve en la consola y en la UI. */
 function trace(step: string) {
@@ -56,10 +63,7 @@ async function load(): Promise<Transcriber> {
   for (const dtype of DTYPES) {
     try {
       trace(`cargando modelo (${dtype})`);
-      return (await pipeline(TASK, MODEL, {
-        dtype,
-        progress_callback,
-      })) as Transcriber;
+      return await asrPipeline(TASK, MODEL, { dtype, progress_callback });
     } catch (e) {
       lastErr = e;
       console.warn(`[transcribe] falló con dtype=${dtype}:`, e);
