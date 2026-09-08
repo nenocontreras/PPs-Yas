@@ -23,6 +23,8 @@ if (wasmEnv) {
 
 declare const self: DedicatedWorkerGlobalScope & typeof globalThis;
 
+console.log("[transcribe] worker cargado");
+
 const MODEL = "onnx-community/whisper-base";
 const TASK = "automatic-speech-recognition";
 

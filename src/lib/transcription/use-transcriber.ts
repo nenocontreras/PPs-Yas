@@ -27,8 +27,12 @@ type WorkerMsg =
   | { type: "done"; payload: string }
   | { type: "error"; payload: string };
 
-/** Si el worker no dice nada en este tiempo, algo se colgó. */
-const WATCHDOG_MS = 180_000;
+/**
+ * Si el worker no dice nada en este tiempo, algo se colgó. Generoso: en un
+ * celular, crear la sesión de ONNX desde el modelo puede tardar 1-2 min sin
+ * emitir eventos.
+ */
+const WATCHDOG_MS = 300_000;
 
 /**
  * Hook para transcribir audio en el dispositivo con Whisper. Devuelve el estado
