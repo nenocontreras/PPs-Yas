@@ -24,7 +24,7 @@ Si en algún momento una tarea pedida implica romper alguno de estos puntos (ej:
 - **Frontend**: Next.js (App Router) + TypeScript + Tailwind CSS
 - **PWA**: `@serwist/next` (manifest + service worker). Build con `--webpack` (Serwist plugin no soporta Turbopack en Next 16).
 - **Backend/DB**: Supabase (Postgres + Auth + Storage + pgvector)
-- **Transcripción**: `@huggingface/transformers` **v3** (Whisper `whisper-base` q8, WASM single-thread, client-side). v4 trae un onnxruntime-web `-dev` que rompe los modelos cuantizados de whisper — quedarse en v3.x. Runtime WASM self-hosteado en `/public/ort/` (`scripts/copy-ort-wasm.mjs`).
+- **Transcripción**: `@huggingface/transformers` **v3** (Whisper `whisper-small` q8, ~240 MB, WASM single-thread, client-side). v4 trae un onnxruntime-web `-dev` que rompe los modelos cuantizados de whisper — quedarse en v3.x. Runtime WASM self-hosteado en `/public/ort/` (`scripts/copy-ort-wasm.mjs`).
 - **Resumen de entrevistas**: adaptador multi-proveedor (`src/lib/resumen/`) — Gemini / OpenAI / Claude / OpenRouter, con rotación y fallback; solo texto ya anonimizado
 - **Búsqueda**: embeddings client-side (`gte-small`) + pgvector
 - **Hosting**: Vercel (frontend) + Supabase (backend)

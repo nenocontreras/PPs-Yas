@@ -64,8 +64,8 @@ export function TranscriptionPanel({
                 Descargando el modelo de transcripción · {modelProgress}%
               </p>
               <p className="mt-1 text-xs text-muted">
-                Solo la primera vez (~80 MB). Después queda guardado en el
-                navegador.
+                Solo la primera vez (~240 MB). Después queda guardado en el
+                navegador y no se vuelve a bajar. Mejor con wifi.
               </p>
               <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
                 <div

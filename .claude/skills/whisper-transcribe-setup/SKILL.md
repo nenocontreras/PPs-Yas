@@ -26,7 +26,7 @@ Con la 3.8.1 (onnxruntime-web 1.22) `dtype: "q8"` en `whisper-base` funciona
 ## Arquitectura
 
 1. **Web Worker** (`src/lib/transcription/worker.ts`): carga el modelo y corre la inferencia fuera del hilo principal. Nunca bloquear la UI del celular.
-2. **Modelo**: `onnx-community/whisper-base`, `dtype: "q8"` explícito (~73 MB). Español: `language: "spanish"`, `task: "transcribe"`.
+2. **Modelo**: `onnx-community/whisper-small`, `dtype: "q8"` explícito (~240 MB — `base` transcribe pobre en español; `small` es el salto de calidad que vale). Español: `language: "spanish"`, `task: "transcribe"`, `no_repeat_ngram_size: 3`.
    - **Backend WASM, NO WebGPU.** En transformers.js WebGPU + whisper se cuelga al reinicializar una segunda sesión en la misma página, sin tirar error.
    - **`env.backends.onnx.wasm.numThreads = 1`** (sin threads → no depende de `SharedArrayBuffer` / `crossOriginIsolated`, una fuente de cuelgue) y **`wasmPaths = "/ort/"`** (runtime servido de `public/ort/`, copiado de `node_modules/onnxruntime-web/dist/` en `prebuild`; el CDN de jsDelivr y que el SW/proxy lo intercepten colgaba la init).
    - **El proxy de sesión (`src/proxy.ts`) NO debe cubrir `/ort/` ni `.wasm`/`.mjs`** — cada request dispararía `supabase.auth.getUser()` y en móvil eso cuelga la carga.

@@ -25,12 +25,14 @@ declare const self: DedicatedWorkerGlobalScope & typeof globalThis;
 
 console.log("[transcribe] worker cargado");
 
-const MODEL = "onnx-community/whisper-base";
+// `small` transcribe bastante mejor que `base` en español; pesa ~240 MB en q8
+// (una sola vez por dispositivo, después queda en caché).
+const MODEL = "onnx-community/whisper-small";
 const TASK = "automatic-speech-recognition";
 
-// `q8` (~73 MB) es el que anda con onnxruntime-web 1.22 (transformers.js v3).
-// `fp32` (~280 MB) como último recurso si algún navegador raro falla con q8.
-const DTYPES: DataType[] = ["q8", "fp32"];
+// `q8` (~240 MB) anda con onnxruntime-web 1.22 (transformers.js v3). `fp16`
+// (~460 MB) como último recurso si algún navegador raro falla con q8.
+const DTYPES: DataType[] = ["q8", "fp16"];
 
 type TranscribeMsg = { type: "transcribe"; audio: Float32Array };
 
@@ -90,6 +92,8 @@ self.onmessage = async (e: MessageEvent<TranscribeMsg>) => {
       chunk_length_s: 30,
       stride_length_s: 5,
       return_timestamps: false,
+      // Corta los loops de repetición típicos de Whisper en tramos poco claros.
+      no_repeat_ngram_size: 3,
     });
 
     trace("inferencia ok");
