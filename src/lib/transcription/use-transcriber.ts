@@ -53,7 +53,6 @@ export function useTranscriber() {
 
   const [phase, setPhase] = useState<TranscriberPhase>("idle");
   const [modelProgress, setModelProgress] = useState<number | null>(null);
-  const [step, setStep] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const clearWatchdog = useCallback(() => {
@@ -90,7 +89,6 @@ export function useTranscriber() {
 
       if (msg.type === "debug") {
         stepRef.current = msg.payload;
-        setStep(msg.payload);
       } else if (msg.type === "progress") {
         setPhase("loading-model");
         const { file, loaded, total } = msg.payload;
@@ -151,7 +149,6 @@ export function useTranscriber() {
 
       setPhase("loading-model");
       setModelProgress(null);
-      setStep(null);
       stepRef.current = null;
       bytesByFile.current.clear();
       armWatchdog();
@@ -166,9 +163,8 @@ export function useTranscriber() {
   const reset = useCallback(() => {
     setPhase("idle");
     setModelProgress(null);
-    setStep(null);
     setError(null);
   }, []);
 
-  return { phase, modelProgress, step, error, transcribe, reset };
+  return { phase, modelProgress, error, transcribe, reset };
 }
